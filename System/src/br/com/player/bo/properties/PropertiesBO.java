@@ -34,13 +34,13 @@ public class PropertiesBO {
 			}
 			return pojo;
 		}catch (NamingException e){
-			log.error("Erro ao criar propriedade. [classe: " + getClass().getName() + "; m�todo: create; erro: " + e.getMessage() + "]");
+			log.error("PropertiesBO:create("+property+")", e);
 			throw e;
 		}catch (SQLException e){
-			log.error("Erro ao criar propriedade. [classe: " + getClass().getName() + "; m�todo: create; erro: " + e.getMessage() + "]");
+			log.error("PropertiesBO:create("+property+")", e);
 			throw e;
 		}catch (Exception e){
-			log.error("Erro ao criar propriedade. [classe: " + getClass().getName() + "; m�todo: create; erro: " + e.getMessage() + "]");
+			log.error("PropertiesBO:create("+property+")", e);
 			throw e;
 		}
 	}
@@ -62,7 +62,7 @@ public class PropertiesBO {
 	    	log.error("Erro ao deletar propriedade. [classe: " + getClass().getName() + "; m�todo: delete(" + id + "); erro: " + e.getMessage() + "]");
 	    	throw e;
 	    }
-  }
+	}
   
 	public Properties edit(Properties property) throws NamingException, SQLException, Exception {
 

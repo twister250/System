@@ -108,59 +108,59 @@ public class PropertiesBean extends AbstractBean{
 		return null;
 	}
   
-	  public String delete(String id){
+	public String delete(String id){
 		  
-		  if(log.isDebugEnabled())
-			  log.debug("PropertiesBean:delete("+id+")");
+		if(log.isDebugEnabled())
+			log.debug("PropertiesBean:delete("+id+")");
 		  
-		  User user = SessionContext.getInstance().getUserSession();
-		  if (user == null)
-			  return "/access/login.xhtml";
-		  
-		  try{
-			  this.propertiesBO.delete(Long.valueOf(Long.parseLong(id)));
-			  setProperties(this.propertiesBO.list());
-			  addInfoMessage(null, "Propriedade: " + id, "Configuração removida com sucesso.");
-			  return "/player/home.xhtml?faces-redirect=true";
-		  }catch (NamingException e){
-			  log.error("Erro ao deletar propriedade. Falha ao acessar datasource. [id: " + id + "] " + e);
-			  addErrorMessage(null, "Erro ao deletar propriedade.", e.getMessage());
-			  return null;
-		  }catch (SQLException e){
-			  log.error("Erro ao deletar propriedade. Falha ao acessar banco de dados. [id: " + id + "] " + e);
-			  addErrorMessage(null, "Erro ao deletar propriedade.", e.getMessage());
-			  return null;
-		  }catch (Exception e){
-			  log.error("Erro ao deletar propriedade. [id: " + id + "] " + e);
-			  addErrorMessage(null, "Erro ao deletar propriedade.", e.getMessage());
-		  }
-		  return null;
-	  }
+		User user = SessionContext.getInstance().getUserSession();
+		if (user == null)
+			return "/access/login.xhtml";
+	  
+		try{
+			this.propertiesBO.delete(Long.valueOf(Long.parseLong(id)));
+			setProperties(this.propertiesBO.list());
+			addInfoMessage(null, "Propriedade: " + id, "Configuração removida com sucesso.");
+			return "/player/home.xhtml?faces-redirect=true";
+		}catch (NamingException e){
+			log.error("Erro ao deletar propriedade. Falha ao acessar datasource. [id: " + id + "] " + e);
+			addErrorMessage(null, "Erro ao deletar propriedade.", e.getMessage());
+			return null;
+		}catch (SQLException e){
+			log.error("Erro ao deletar propriedade. Falha ao acessar banco de dados. [id: " + id + "] " + e);
+			addErrorMessage(null, "Erro ao deletar propriedade.", e.getMessage());
+			return null;
+		}catch (Exception e){
+			log.error("Erro ao deletar propriedade. [id: " + id + "] " + e);
+			addErrorMessage(null, "Erro ao deletar propriedade.", e.getMessage());
+		}
+		return null;
+	}
   
-	  public String show(String id){
+	public String show(String id){
 		  
-		  if(log.isDebugEnabled())
-			  log.debug("PropertiesBean:show("+id+")");
+		if(log.isDebugEnabled())
+			log.debug("PropertiesBean:show("+id+")");
 		  
-		  try{
-			  if ((id == null) || (id.equals(""))){
-				  addErrorMessage(null, "ERRO", "Id não pode ser nulo");
-				  return null;
-			  }
-			  this.property = this.propertiesBO.get(Long.valueOf(Long.parseLong(id)));
-			  setProperty(this.property);
-			  return "/player/properties/show.xhtml?faces-redirect=true";
-		  }catch (NamingException e){
-			  log.error(e);
-			  return null;
-		  }catch (SQLException e){
-			  log.error(e);
-			  return null;
-		  }catch (Exception e){
-			  log.error(e);
-		  }
-		  return null;
-	  }
+		try{
+			if ((id == null) || (id.equals(""))){
+				addErrorMessage(null, "ERRO", "Id não pode ser nulo");
+				return null;
+			}
+			this.property = this.propertiesBO.get(Long.valueOf(Long.parseLong(id)));
+			setProperty(this.property);
+			return "/player/properties/show.xhtml?faces-redirect=true";
+		}catch (NamingException e){
+			log.error(e);
+			return null;
+		}catch (SQLException e){
+			log.error(e);
+			return null;
+		}catch (Exception e){
+			log.error(e);
+		}
+		return null;
+	}
   
 	public PropertiesBO getPropertiesBO(){
 		return this.propertiesBO;
