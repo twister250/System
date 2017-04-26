@@ -14,93 +14,78 @@ import org.apache.log4j.Logger;
 @ManagedBean(name="propertiesBO", eager=true)
 @ApplicationScoped
 @Stateful(passivationCapable=true)
-public class PropertiesBO
-{
-  private static Logger log = Logger.getLogger(PropertiesBO.class);
+
+public class PropertiesBO {
+	
+	private static Logger log = Logger.getLogger(PropertiesBO.class);
   
-  public Properties create(Properties property) throws NamingException, SQLException, Exception{
+	public Properties create(Properties property) throws NamingException, SQLException, Exception{
 	  
-	  if(log.isDebugEnabled())
-		  log.debug("PropertiesBO:create("+property+")");
+		if(log.isDebugEnabled())
+			log.debug("PropertiesBO:create("+property+")");
 	  
-    try
-    {
-      Properties pojo = PropertiesDAO.getInstance().create(property, SessionContext.getInstance().getUserSession());
-      if (pojo == null)
-      {
-        log.error("Erro ao inserir Properties no banco de dados.");
-        throw new Exception("Erro ao inserir Properties no banco de dados.");
-      }
-      return pojo;
-    }
-    catch (NamingException e)
-    {
-      log.error("Erro ao criar propriedade. [classe: " + getClass().getName() + "; m�todo: create; erro: " + e.getMessage() + "]");
-      throw e;
-    }
-    catch (SQLException e)
-    {
-      log.error("Erro ao criar propriedade. [classe: " + getClass().getName() + "; m�todo: create; erro: " + e.getMessage() + "]");
-      throw e;
-    }
-    catch (Exception e)
-    {
-      log.error("Erro ao criar propriedade. [classe: " + getClass().getName() + "; m�todo: create; erro: " + e.getMessage() + "]");
-      throw e;
-    }
+		try{
+      
+			Properties pojo = PropertiesDAO.getInstance().create(property, SessionContext.getInstance().getUserSession());
+      
+			if (pojo == null){    	  
+				log.error("Erro ao inserir Properties no banco de dados.");
+				throw new Exception("Erro ao inserir Properties no banco de dados.");
+			}
+			return pojo;
+		}catch (NamingException e){
+			log.error("Erro ao criar propriedade. [classe: " + getClass().getName() + "; m�todo: create; erro: " + e.getMessage() + "]");
+			throw e;
+		}catch (SQLException e){
+			log.error("Erro ao criar propriedade. [classe: " + getClass().getName() + "; m�todo: create; erro: " + e.getMessage() + "]");
+			throw e;
+		}catch (Exception e){
+			log.error("Erro ao criar propriedade. [classe: " + getClass().getName() + "; m�todo: create; erro: " + e.getMessage() + "]");
+			throw e;
+		}
+	}
+  
+	public int delete(Long id) throws NamingException, SQLException, Exception {
+		
+		if(log.isDebugEnabled())
+			log.debug("PropertiesBO:delete("+id+")");
+		
+	    try {
+	    	return PropertiesDAO.getInstance().delete(id);
+	    }catch (NamingException e){
+	    	log.error("Erro ao deletar propriedade. [classe: " + getClass().getName() + "; m�todo: delete(" + id + "); erro: " + e.getMessage() + "]");
+	    	throw e;
+	    }catch (SQLException e){
+	    	log.error("Erro ao deletar propriedade. [classe: " + getClass().getName() + "; m�todo: delete(" + id + "); erro: " + e.getMessage() + "]");
+	    	throw e;
+	    }catch (Exception e){
+	    	log.error("Erro ao deletar propriedade. [classe: " + getClass().getName() + "; m�todo: delete(" + id + "); erro: " + e.getMessage() + "]");
+	    	throw e;
+	    }
   }
   
-  public int delete(Long id)
-    throws NamingException, SQLException, Exception
-  {
-    try
-    {
-      return PropertiesDAO.getInstance().delete(id);
-    }
-    catch (NamingException e)
-    {
-      log.error("Erro ao deletar propriedade. [classe: " + getClass().getName() + "; m�todo: delete(" + id + "); erro: " + e.getMessage() + "]");
-      throw e;
-    }
-    catch (SQLException e)
-    {
-      log.error("Erro ao deletar propriedade. [classe: " + getClass().getName() + "; m�todo: delete(" + id + "); erro: " + e.getMessage() + "]");
-      throw e;
-    }
-    catch (Exception e)
-    {
-      log.error("Erro ao deletar propriedade. [classe: " + getClass().getName() + "; m�todo: delete(" + id + "); erro: " + e.getMessage() + "]");
-      throw e;
-    }
-  }
-  
-  public Properties edit(Properties property)
-    throws NamingException, SQLException, Exception
-  {
-    try
-    {
-      if (PropertiesDAO.getInstance().update(property) > 0L) {
-        return property;
-      }
-      log.error("Erro ao alterar propriedade.");
-      return null;
-    }
-    catch (NamingException e)
-    {
-      log.error(e);
-      throw e;
-    }
-    catch (SQLException e)
-    {
-      log.error(e);
-      throw e;
-    }
-    catch (Exception e)
-    {
-      log.error(e);
-      throw e;
-    }
-  }
+	public Properties edit(Properties property) throws NamingException, SQLException, Exception {
+
+		if(log.isDebugEnabled())
+			log.debug("PropertiesBO:edit("+property+")");
+		
+		try{
+	    	if (PropertiesDAO.getInstance().update(property) > 0L) {
+	    		return property;
+	    	}
+	    	log.error("Erro ao alterar propriedade.");
+	    	return null;
+	    }catch (NamingException e){
+	    	log.error("PropertiesBO:edit("+property+")",e);
+	    	throw e;
+	    }catch (SQLException e){
+	    	log.error("PropertiesBO:edit("+property+")",e);
+	    	throw e;
+	    }catch (Exception e){
+	    	log.error("PropertiesBO:edit("+property+")",e);
+	    	throw e;
+	    }
+	}
   
   public Properties get(Long id)
     throws NamingException, SQLException, Exception
