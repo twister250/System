@@ -70,15 +70,15 @@ public class UserBean extends AbstractBean{
 	    	return "/player/home.xhtml?faces-redirect=true";
 	    }catch (NamingException e){
 	    	addErrorMessage(null, e.getCause().toString(), e.getMessage());
-	    	log.error(e.getMessage());
+	    	log.error("Erro ao conectar no banco de dados.", e);
 	    	return null;
 	    }catch (SQLException e)	    {
 	      addErrorMessage(null, e.getCause().toString(), e.getMessage());
-	      log.error(e.getMessage());
+	      log.error("Erro ao buscar usuário.", e);
 	      return null;
 	    }catch (Exception e){
 	    	addErrorMessage(null, e.getCause().toString(), e.getMessage());
-	    	log.error(e.getMessage());
+	    	log.error("Erro ao validar usuário.", e);
 	    }
 	    return null;
 	}
