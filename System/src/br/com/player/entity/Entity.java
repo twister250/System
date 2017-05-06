@@ -1,6 +1,5 @@
 package br.com.player.entity;
 
-public abstract interface Entity
-{
-  public abstract Long getId();
+public abstract interface Entity {
+	public abstract Long getId();
 }

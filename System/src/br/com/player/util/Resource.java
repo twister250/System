@@ -12,13 +12,13 @@ import javax.sql.DataSource;
 public class Resource implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private static final Properties playerProperties = Config.getProperties("player.properties");
-  
+
 	public DataSource lookupDataSource(String dataSource, String provider) throws NamingException {
-	    Context context = null;
-	    Hashtable<String, String> hashTable = new Hashtable<String, String>();
-	    hashTable.put("java.naming.provider.url", playerProperties.getProperty(provider));
-	    hashTable.put("java.naming.factory.initial", playerProperties.getProperty("INITIAL_CONTEXT_FACTORY"));
-	    context = new InitialContext(hashTable);
-	    return (DataSource)context.lookup(playerProperties.getProperty(dataSource));
+		Context context = null;
+		Hashtable<String, String> hashTable = new Hashtable<String, String>();
+		hashTable.put("java.naming.provider.url", playerProperties.getProperty(provider));
+		hashTable.put("java.naming.factory.initial", playerProperties.getProperty("INITIAL_CONTEXT_FACTORY"));
+		context = new InitialContext(hashTable);
+		return (DataSource) context.lookup(playerProperties.getProperty(dataSource));
 	}
 }

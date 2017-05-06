@@ -1,47 +1,52 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html 
-	xmlns="http://www.w3.org/1999/xhtml"
+<html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui">
-	<h:head>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<h:outputStylesheet library="theme1" name="css/player.css"/>
-		<title>Property</title>		
-	</h:head>
-	<h:body>
-		<p:link outcome="/player/home" value="Home" />		
-		<p:separator/>		
-		<p:link outcome="/player/properties/list" value="Criar"/>
-		<p:panelGrid columns="2">
-		
-			<h:outputLabel value="Nome:"/>
-			<h:outputText id="name" value="#{propertiesBean.property.name}"/>
-						
-			<h:outputLabel value="Valor:"/>
-			<h:outputText id="value" value="#{propertiesBean.property.value}"/>
-			
-			<h:outputLabel value="Tipo:"/>
-			<h:outputText id="type" value="#{propertiesBean.property.type.name}"/>
-			
-			<h:outputLabel value="Data de Criação:" rendered="#{not empty propertiesBean.property.created}"/>
-			<h:outputText id="created" value="#{propertiesBean.property.created}" rendered="#{not empty propertiesBean.property.created}">
-				<f:convertDateTime pattern="dd/MM/yyyy"/>
-			</h:outputText>
-			
-			<h:outputLabel value="Alterado em:" rendered="#{not empty propertiesBean.property.modified}"/>
-			<h:outputText value="#{propertiesBean.property.modified}" rendered="#{not empty propertiesBean.property.modified}">
-				<f:convertDateTime pattern="dd/MM/yyyy"/>
-			</h:outputText>
-			
-			<h:outputLabel value="Criado Por:" rendered="#{not empty propertiesBean.property.user}"/>
-			<h:outputText value="#{propertiesBean.property.user.name}" rendered="#{not empty propertiesBean.property.user}"/>
-		
-		</p:panelGrid>
-		
-		<p:link outcome="/player/properties/edit" value="Editar"/>
-		
-	</h:body>
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<h:outputStylesheet library="theme1" name="css/player.css" />
+	<title>Property</title>
+</h:head>
+<h:body>
+	<p:link outcome="/player/home" value="Home" />
+	<p:separator />
+	<p:link outcome="/player/properties/list" value="Criar" />
+	<p:panelGrid columns="2">
+
+		<h:outputLabel value="Nome:" />
+		<h:outputText id="name" value="#{propertiesBean.property.name}" />
+
+		<h:outputLabel value="Valor:" />
+		<h:outputText id="value" value="#{propertiesBean.property.value}" />
+
+		<h:outputLabel value="Tipo:" />
+		<h:outputText id="type" value="#{propertiesBean.property.type.name}" />
+
+		<h:outputLabel value="Data de Criação:"
+			rendered="#{not empty propertiesBean.property.created}" />
+		<h:outputText id="created" value="#{propertiesBean.property.created}"
+			rendered="#{not empty propertiesBean.property.created}">
+			<f:convertDateTime pattern="dd/MM/yyyy" />
+		</h:outputText>
+
+		<h:outputLabel value="Alterado em:"
+			rendered="#{not empty propertiesBean.property.modified}" />
+		<h:outputText value="#{propertiesBean.property.modified}"
+			rendered="#{not empty propertiesBean.property.modified}">
+			<f:convertDateTime pattern="dd/MM/yyyy" />
+		</h:outputText>
+
+		<h:outputLabel value="Criado Por:"
+			rendered="#{not empty propertiesBean.property.user}" />
+		<h:outputText value="#{propertiesBean.property.user.name}"
+			rendered="#{not empty propertiesBean.property.user}" />
+
+	</p:panelGrid>
+
+	<p:link outcome="/player/properties/edit" value="Editar" />
+
+</h:body>
 </html>

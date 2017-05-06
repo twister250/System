@@ -1,43 +1,43 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html
-	xmlns="http://www.w3.org/1999/xhtml"
+<html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui">
-	
-	<h:head>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<h:outputStylesheet library="theme1" name="css/player.css"/>
-		<title>Player Access</title>
-	</h:head>
-	<h:body>
-		<h:form>
-			<h:panelGrid id="grid" columns="2" cellpadding="5">
-				<p:outputLabel for="login" value="Email:"/>				
-				<p:inputText id="login" value="#{userBean.user.email}" />				
-				
-				<p:outputLabel for="password" value="Senha:"/>
-				<p:password id="password" value="#{userBean.user.password}" />
-				
-			</h:panelGrid>
-			<p:commandButton value="Entrar" action="#{userBean.doLogin}" update="growl"/>
-				
-		</h:form>
-		
-		<!-- <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true"/> -->
-		
-		<p:growl id="growl" showDetail="true" sticky="true"/>
-		
-		<p:separator/>
-		
-		<h:link outcome="joinus" value="">Criar Conta</h:link>		
-		
-		<br></br>
-		<br></br>
-		
-		<!-- Mostra o usuário armazenado na sessão -->
-		<p:outputLabel value="Usuário Logado: #{userlogged.name}"/>
-	</h:body>
+
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<h:outputStylesheet library="theme1" name="css/player.css" />
+	<title>Player Access</title>
+</h:head>
+<h:body>
+	<h:form>
+		<h:panelGrid id="grid" columns="2" cellpadding="5">
+			<p:outputLabel for="login" value="Email:" />
+			<p:inputText id="login" value="#{userBean.user.email}" />
+
+			<p:outputLabel for="password" value="Senha:" />
+			<p:password id="password" value="#{userBean.user.password}" />
+
+		</h:panelGrid>
+		<p:commandButton value="Entrar" action="#{userBean.doLogin}"
+			update="growl" />
+
+	</h:form>
+
+	<!-- <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true"/> -->
+
+	<p:growl id="growl" showDetail="true" sticky="true" />
+
+	<p:separator />
+
+	<h:link outcome="joinus" value="">Criar Conta</h:link>
+
+	<br></br>
+	<br></br>
+
+	<!-- Mostra o usuário armazenado na sessão -->
+	<p:outputLabel value="Usuário Logado: #{userlogged.name}" />
+</h:body>
 </html>
