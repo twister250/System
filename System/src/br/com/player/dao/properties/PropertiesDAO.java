@@ -1,7 +1,6 @@
 package br.com.player.dao.properties;
 
 import java.io.Serializable;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,240 +17,304 @@ import br.com.player.dao.factory.DAO;
 import br.com.player.entity.Properties;
 import br.com.player.entity.PropertiesType;
 import br.com.player.entity.User;
+import br.com.player.util.Messages;
 
 public class PropertiesDAO extends DAO implements Serializable {
-	private PreparedStatement preparedStatement = null;
-	private ResultSet resultSet = null;
+	
+	private static final long serialVersionUID = 1L;
+	private static Logger log = Logger.getLogger(PropertiesDAO.class);
+	
 	private static List<Properties> list = null;
 	private static Properties property = null;
 	private static PropertiesDAO propertiesDAO = null;
 	private static PropertiesType type = null;
 	private static Timestamp timestamp = null;
 	private static User user = null;
-	private static final long serialVersionUID = 1L;
-	private static Logger log = Logger.getLogger(PropertiesDAO.class);
+	
+	private PreparedStatement preparedStatement = null;
+	private ResultSet resultSet = null;
 
 	public static PropertiesDAO getInstance() {
 		return propertiesDAO == null ? new PropertiesDAO() : propertiesDAO;
 	}
 
-	public Properties create(Properties property, User user) throws SQLException, NamingException, Exception {
+	public long create(Properties property, User user) throws NamingException, SQLException, Exception {
+
+		long id = -1;
+
 		try {
+			
 			timestamp = new Timestamp(Calendar.getInstance().getTimeInMillis());
 
-			this.preparedStatement = getConnection().prepareStatement(
-					"insert into properties (name, value, properties_type_id, created, modified, user_id) values (?,?,?,?,?,?)",
-					1);
-			this.preparedStatement.setString(1, property.getName());
-			this.preparedStatement.setString(2, property.getValue());
-			this.preparedStatement.setLong(3, property.getType().getId().longValue());
-			this.preparedStatement.setTimestamp(4, timestamp);
-			this.preparedStatement.setNull(5, 91);
-			this.preparedStatement.setLong(6, user.getId().longValue());
-			this.preparedStatement.executeUpdate();
-			this.resultSet = this.preparedStatement.getGeneratedKeys();
-			if ((this.resultSet != null) && (this.resultSet.next())) {
-				property.setId(Long.valueOf(this.resultSet.getLong(1)));
-				property.setCreated(new Date(timestamp.getTime()));
-				property.setUser(user);
-				return property;
+			preparedStatement = getConnection().prepareStatement(SQLProperties.SQL_INSERT, PreparedStatement.RETURN_GENERATED_KEYS);
+			preparedStatement.setString(1, property.getName());
+			preparedStatement.setString(2, property.getValue());
+			preparedStatement.setLong(3, property.getType().getId().longValue());
+			preparedStatement.setTimestamp(4, timestamp);
+			preparedStatement.setNull(5, 91);
+			preparedStatement.setLong(6, user.getId().longValue());
+			preparedStatement.executeUpdate();
+			resultSet = preparedStatement.getGeneratedKeys();
+
+			if (resultSet == null)
+				throw new Exception("Erro ao inserir propriedade no banco de dados.");
+
+			while (resultSet.next()) {
+				id = Long.valueOf(resultSet.getLong(1));
 			}
-			return null;
-		} catch (SQLException e) {
-			log.error(e);
-			throw e;
+
+			return id;
+
 		} catch (NamingException e) {
-			log.error(e);
+			log.error(Messages.ERROR_INS, e);
+			throw e;
+		} catch (SQLException e) {
+			log.error(Messages.ERROR_INS, e);
 			throw e;
 		} catch (Exception e) {
-			log.error(e);
+			log.error(Messages.ERROR_INS, e);
 			throw e;
 		} finally {
-			if (this.preparedStatement != null) {
-				this.preparedStatement.close();
-			}
-			if (this.resultSet != null) {
-				this.resultSet.close();
-			}
+			
+			if (preparedStatement != null && !preparedStatement.isClosed())
+				preparedStatement.close();
+			
+			if (resultSet != null && !resultSet.isClosed())
+				resultSet.close();
+			
 			try {
+				
 				closeConnection();
+				
 			} catch (NamingException e) {
+				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
 				throw e;
 			} catch (SQLException e) {
+				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
 				throw e;
 			} catch (Exception e) {
+				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
 				throw e;
 			}
 		}
 	}
 
 	public Properties get(Long id) throws NamingException, SQLException, Exception {
-		try {
-			this.preparedStatement = getConnection().prepareStatement(
-					"select a.id, a.name, a.value, a.properties_type_id type_id, a.created, a.modified, a.user_id, b.name type_name, c.name user_name\tfrom properties a, properties_type b, user c\twhere a.id = ?\tand a.properties_type_id = b.id\tand a.user_id = c.id");
-			this.preparedStatement.setLong(1, id.longValue());
-			this.resultSet = this.preparedStatement.executeQuery();
-			while (this.resultSet.next()) {
-				property = new Properties();
 
-				property.setId(Long.valueOf(this.resultSet.getLong("ID")));
-				property.setName(this.resultSet.getString("NAME"));
-				property.setValue(this.resultSet.getString("VALUE"));
-				property.setCreated(this.resultSet.getDate("CREATED"));
-				property.setModified(this.resultSet.getDate("MODIFIED"));
+		try {
+			
+			preparedStatement = getConnection().prepareStatement(SQLProperties.SQL_GET);
+			preparedStatement.setLong(1, id.longValue());
+			resultSet = preparedStatement.executeQuery();
+
+			while (resultSet.next()) {
+				
+				property = new Properties();
+				property.setId(Long.valueOf(resultSet.getLong(SQLProperties.ID)));
+				property.setName(resultSet.getString(SQLProperties.NAME));
+				property.setValue(resultSet.getString(SQLProperties.VALUE));
+				property.setCreated(resultSet.getDate(SQLProperties.CREATED));
+				property.setModified(resultSet.getDate(SQLProperties.MODIFIED));
 
 				PropertiesType type = new PropertiesType();
-				type.setName(this.resultSet.getString("TYPE_NAME"));
-				type.setId(Long.valueOf(this.resultSet.getLong("TYPE_ID")));
+				type.setName(resultSet.getString(SQLProperties.TYPE_NAME));
+				type.setId(Long.valueOf(resultSet.getLong(SQLProperties.TYPE_ID)));
+				
 				property.setType(type);
-				user.setId(Long.valueOf(this.resultSet.getLong("USER_ID")));
+				
+				user = new User();
+				user.setId(Long.valueOf(resultSet.getLong(SQLProperties.USER_ID)));
 				property.setUser(user);
 			}
+			
 			return property;
+			
 		} catch (NamingException e) {
-			log.error(e);
+			log.error(Messages.ERROR_GET, e);
 			throw e;
 		} catch (SQLException e) {
-			log.error(e);
+			log.error(Messages.ERROR_GET, e);
 			throw e;
 		} catch (Exception e) {
-			log.error(e);
+			log.error(Messages.ERROR_GET, e);
 			throw e;
 		} finally {
-			if (this.preparedStatement != null) {
-				this.preparedStatement.close();
-			}
-			if (this.resultSet != null) {
-				this.resultSet.close();
-			}
+			
+			if (preparedStatement != null && preparedStatement.isClosed())
+				preparedStatement.close();
+			
+			if (resultSet != null && resultSet.isClosed())
+				resultSet.close();
+			
 			try {
+				
 				closeConnection();
+				
 			} catch (NamingException e) {
+				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
 				throw e;
 			} catch (SQLException e) {
+				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
 				throw e;
 			} catch (Exception e) {
+				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
 				throw e;
 			}
 		}
 	}
 
-	public long update(Properties property) throws SQLException, NamingException, Exception {
+	public long update(Properties property, User user) throws SQLException, NamingException, Exception {
+
+		if (log.isDebugEnabled())
+			log.debug("PropertiesDAO:update(" + property.toString() + ")");
+		
 		try {
+			
 			timestamp = new Timestamp(Calendar.getInstance().getTimeInMillis());
 
-			this.preparedStatement = getConnection().prepareStatement(
-					"update properties set name = ?, value = ?, properties_type_id = ?, modified = ? where id = ?");
-			this.preparedStatement.setString(1, property.getName());
-			this.preparedStatement.setString(2, property.getValue());
-			this.preparedStatement.setLong(3, property.getType().getId().longValue());
-			this.preparedStatement.setTimestamp(4, timestamp);
-			this.preparedStatement.setLong(5, property.getId().longValue());
-			return this.preparedStatement.executeUpdate();
+			preparedStatement = getConnection().prepareStatement(SQLProperties.SQL_UPDATE, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			preparedStatement.setString(1, property.getName());
+			preparedStatement.setString(2, property.getValue());
+			preparedStatement.setLong(3, property.getType().getId().longValue());
+			preparedStatement.setTimestamp(4, timestamp);
+			preparedStatement.setLong(5, user.getId().longValue());
+			preparedStatement.setLong(6, property.getId().longValue());
+
+			return preparedStatement.executeUpdate();
+
 		} catch (NamingException e) {
-			log.error(e);
+			log.error(Messages.ERROR_UPD, e);
 			throw e;
 		} catch (SQLException e) {
-			log.error(e);
+			log.error(Messages.ERROR_UPD, e);
 			throw e;
 		} catch (Exception e) {
-			log.error(e);
+			log.error(Messages.ERROR_UPD, e);
 			throw e;
 		} finally {
-			if (this.preparedStatement != null) {
-				this.preparedStatement.close();
-			}
-			if (this.resultSet != null) {
-				this.resultSet.close();
-			}
+			
+			if (preparedStatement != null && !preparedStatement.isClosed())
+				preparedStatement.close();
+
 			try {
+
 				closeConnection();
+
 			} catch (NamingException e) {
-				log.error(e);
+				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
 				throw e;
 			} catch (SQLException e) {
-				log.error(e);
+				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
 				throw e;
 			} catch (Exception e) {
-				log.error(e);
+				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
 				throw e;
 			}
 		}
 	}
 
-	public int delete(Long id) throws SQLException, NamingException, Exception {
+	public long delete(Long id) throws SQLException, NamingException, Exception {
+
 		try {
-			this.preparedStatement = getConnection().prepareStatement("delete from properties where id = ?");
-			this.preparedStatement.setLong(1, id.longValue());
-			return this.preparedStatement.executeUpdate();
+			
+			preparedStatement = getConnection().prepareStatement(SQLProperties.SQL_DELETE);
+			preparedStatement.setLong(1, id.longValue());
+			
+			return preparedStatement.executeUpdate();
+			
 		} catch (NamingException e) {
-			log.error(e);
+			log.error(Messages.ERROR_DEL, e);
 			throw e;
 		} catch (SQLException e) {
-			log.error(e);
+			log.error(Messages.ERROR_DEL, e);
 			throw e;
 		} catch (Exception e) {
-			log.error(e);
+			log.error(Messages.ERROR_DEL, e);
 			throw e;
 		} finally {
-			if (this.preparedStatement != null) {
-				this.preparedStatement.close();
+			
+			if (preparedStatement != null && !preparedStatement.isClosed())
+				preparedStatement.close();
+
+			try {
+
+				closeConnection();
+
+			} catch (NamingException e) {
+				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
+				throw e;
+			} catch (SQLException e) {
+				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
+				throw e;
+			} catch (Exception e) {
+				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
+				throw e;
 			}
 		}
 	}
 
 	public List<Properties> list() throws SQLException, NamingException, Exception {
+		
 		try {
-			this.preparedStatement = getConnection().prepareStatement(
-					"select a.id, a.name, a.value, b.id type_id, b.name type_name, a.created, a.modified,\ta.user_id, c.name user_name\tfrom properties a, properties_type b, user c\twhere a.properties_type_id = b.id and\ta.user_id = c.id");
-			this.resultSet = this.preparedStatement.executeQuery();
-			list = new ArrayList();
-			while (this.resultSet.next()) {
-				user = new User();
-				user.setId(Long.valueOf(this.resultSet.getLong("USER_ID")));
-				user.setName(this.resultSet.getString("USER_NAME"));
-
-				type = new PropertiesType();
-				type.setId(Long.valueOf(this.resultSet.getLong("TYPE_ID")));
-				type.setName(this.resultSet.getString("TYPE_NAME"));
+		
+			preparedStatement = getConnection().prepareStatement(SQLProperties.SQL_LIST);
+			resultSet = preparedStatement.executeQuery();
+			list = new ArrayList<Properties>();
+			
+			while (resultSet.next()) {			
 
 				property = new Properties();
-				property.setId(Long.valueOf(this.resultSet.getLong("ID")));
-				property.setName(this.resultSet.getString("NAME"));
-				property.setValue(this.resultSet.getString("VALUE"));
-				property.setCreated(this.resultSet.getDate("CREATED"));
-				property.setModified(this.resultSet.getDate("MODIFIED"));
+				property.setId(Long.valueOf(resultSet.getLong(SQLProperties.ID)));
+				property.setName(resultSet.getString(SQLProperties.NAME));
+				property.setValue(resultSet.getString(SQLProperties.VALUE));
+				property.setCreated(resultSet.getDate(SQLProperties.CREATED));
+				property.setModified(resultSet.getDate(SQLProperties.MODIFIED));
+				
+				user = new User();
+				user.setId(Long.valueOf(resultSet.getLong(SQLProperties.USER_ID)));
+				user.setName(resultSet.getString(SQLProperties.USER_NAME));
+				
+				type = new PropertiesType();
+				type.setId(Long.valueOf(resultSet.getLong(SQLProperties.TYPE_ID)));
+				type.setName(resultSet.getString(SQLProperties.TYPE_NAME));
+				
 				property.setUser(user);
 				property.setType(type);
+				
 				list.add(property);
 			}
+			
 			return list;
-		} catch (SQLException e) {
-			log.error(e);
-			throw e;
+			
 		} catch (NamingException e) {
-			log.error(e);
+			log.error(Messages.ERROR_LIST);
+			throw e;
+		} catch (SQLException e) {
+			log.error(Messages.ERROR_LIST);
 			throw e;
 		} catch (Exception e) {
-			log.error(e);
+			log.error(Messages.ERROR_LIST);
 			throw e;
 		} finally {
-			if (this.preparedStatement != null) {
-				this.preparedStatement.close();
-			}
-			if (this.resultSet != null) {
-				this.resultSet.close();
-			}
+			
+			if (preparedStatement != null && !preparedStatement.isClosed())
+				preparedStatement.close();
+			
+			if (resultSet != null && !resultSet.isClosed())
+				resultSet.close();
+
 			try {
+				
 				closeConnection();
+				
 			} catch (NamingException e) {
-				log.error(e);
+				log.error(Messages.ERROR_CLOSE_CONNECTION);
 				throw e;
 			} catch (SQLException e) {
-				log.error(e);
+				log.error(Messages.ERROR_CLOSE_CONNECTION);
 				throw e;
 			} catch (Exception e) {
-				log.error(e);
+				log.error(Messages.ERROR_CLOSE_CONNECTION);
 				throw e;
 			}
 		}

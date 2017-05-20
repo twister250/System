@@ -8,6 +8,7 @@ import javax.faces.context.FacesContext;
 import br.com.player.entity.User;
 
 public class SessionContext {
+	
 	private static SessionContext instance;
 	private static final String USER_ATTRIBUTE = "userlogged";
 
@@ -17,7 +18,7 @@ public class SessionContext {
 
 	private ExternalContext externalContext() {
 		if (FacesContext.getCurrentInstance() == null) {
-			throw new RuntimeException("Faces context n�o pode ser chamado fora de requisi��o HTTP");
+			throw new RuntimeException("Faces context não pode ser chamado fora de requisição HTTP.");
 		}
 		return FacesContext.getCurrentInstance().getExternalContext();
 	}
@@ -39,6 +40,6 @@ public class SessionContext {
 	}
 
 	public User getUserSession() {
-		return (User) externalContext().getSessionMap().get("userlogged");
+		return (User) externalContext().getSessionMap().get(USER_ATTRIBUTE);
 	}
 }

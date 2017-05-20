@@ -61,12 +61,12 @@ public class User implements Entity {
 	public int hashCode() {
 		int prime = 31;
 		int result = 1;
-		result = 31 * result + (this.created == null ? 0 : this.created.hashCode());
-		result = 31 * result + (this.email == null ? 0 : this.email.hashCode());
-		result = 31 * result + (this.id == null ? 0 : this.id.hashCode());
-		result = 31 * result + (this.modified == null ? 0 : this.modified.hashCode());
-		result = 31 * result + (this.name == null ? 0 : this.name.hashCode());
-		result = 31 * result + (this.password == null ? 0 : this.password.hashCode());
+		result = prime * result + (this.created == null ? 0 : this.created.hashCode());
+		result = prime * result + (this.email == null ? 0 : this.email.hashCode());
+		result = prime * result + (this.id == null ? 0 : this.id.hashCode());
+		result = prime * result + (this.modified == null ? 0 : this.modified.hashCode());
+		result = prime * result + (this.name == null ? 0 : this.name.hashCode());
+		result = prime * result + (this.password == null ? 0 : this.password.hashCode());
 		return result;
 	}
 
@@ -125,4 +125,12 @@ public class User implements Entity {
 		}
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password + ", created="
+				+ created + ", modified=" + modified + "]";
+	}
+	
+	
 }

@@ -12,61 +12,61 @@ import org.apache.log4j.Logger;
 
 import br.com.player.dao.properties.PropertiesDAO;
 import br.com.player.entity.Properties;
+import br.com.player.util.Messages;
 import br.com.player.wrapper.SessionContext;
 
 @ManagedBean(name = "propertiesBO", eager = true)
 @ApplicationScoped
 @Stateful(passivationCapable = true)
-
 public class PropertiesBO {
 
 	private static Logger log = Logger.getLogger(PropertiesBO.class);
 
-	public Properties create(Properties property) throws NamingException, SQLException, Exception {
+	public long create(Properties property) throws NamingException, SQLException, Exception {
 
 		if (log.isDebugEnabled())
 			log.debug("PropertiesBO:create(" + property + ")");
 
 		try {
 
-			Properties pojo = PropertiesDAO.getInstance().create(property,
-					SessionContext.getInstance().getUserSession());
+			long id = PropertiesDAO.getInstance().create(property, SessionContext.getInstance().getUserSession());
 
-			if (pojo == null) {
-				log.error("Erro ao inserir Properties no banco de dados.");
-				throw new Exception("Erro ao inserir Properties no banco de dados.");
+			if (id <= 0) {
+				log.error("Erro ao inserir propriedade. [" + property.toString() + "]");
+				throw new Exception("Erro ao inserir propriedade. [" + property.toString() + "]");
+			} else {
+				return id;
 			}
-			return pojo;
+
 		} catch (NamingException e) {
-			log.error("PropertiesBO:create(" + property + ")", e);
+			log.error(Messages.ERROR_DATASOURCE + "[" + property.toString() + "]", e);
 			throw e;
 		} catch (SQLException e) {
-			log.error("PropertiesBO:create(" + property + ")", e);
+			log.error(Messages.ERROR_DATABASE + "[" + property.toString() + "]", e);
 			throw e;
 		} catch (Exception e) {
-			log.error("PropertiesBO:create(" + property + ")", e);
+			log.error(Messages.ERROR_CREATE + "[" + property.toString() + "]", e);
 			throw e;
 		}
 	}
 
-	public int delete(Long id) throws NamingException, SQLException, Exception {
+	public long delete(Long id) throws NamingException, SQLException, Exception {
 
 		if (log.isDebugEnabled())
 			log.debug("PropertiesBO:delete(" + id + ")");
 
 		try {
+			
 			return PropertiesDAO.getInstance().delete(id);
+			
 		} catch (NamingException e) {
-			log.error("Erro ao deletar propriedade. [classe: " + getClass().getName() + "; m�todo: delete(" + id
-					+ "); erro: " + e.getMessage() + "]");
+			log.error(Messages.ERROR_DATASOURCE, e);
 			throw e;
 		} catch (SQLException e) {
-			log.error("Erro ao deletar propriedade. [classe: " + getClass().getName() + "; m�todo: delete(" + id
-					+ "); erro: " + e.getMessage() + "]");
+			log.error(Messages.ERROR_DATABASE, e);
 			throw e;
 		} catch (Exception e) {
-			log.error("Erro ao deletar propriedade. [classe: " + getClass().getName() + "; m�todo: delete(" + id
-					+ "); erro: " + e.getMessage() + "]");
+			log.error(Messages.ERROR_REMOVE);
 			throw e;
 		}
 	}
@@ -77,52 +77,64 @@ public class PropertiesBO {
 			log.debug("PropertiesBO:edit(" + property + ")");
 
 		try {
-			if (PropertiesDAO.getInstance().update(property) > 0L) {
+			
+			if (PropertiesDAO.getInstance().update(property, SessionContext.getInstance().getUserSession()) > 0L) {
 				return property;
-			}
-			log.error("Erro ao alterar propriedade.");
-			return null;
+			} else {
+				log.error("Erro ao alterar propriedade.");
+				throw new Exception("Erro ao alterar propriedade.");
+			}			
+			
 		} catch (NamingException e) {
-			log.error("PropertiesBO:edit(" + property + ")", e);
+			log.error(Messages.ERROR_DATASOURCE, e);
 			throw e;
 		} catch (SQLException e) {
-			log.error("PropertiesBO:edit(" + property + ")", e);
+			log.error(Messages.ERROR_DATABASE, e);
 			throw e;
 		} catch (Exception e) {
-			log.error("PropertiesBO:edit(" + property + ")", e);
+			log.error(Messages.ERROR_EDIT, e);
 			throw e;
 		}
 	}
 
 	public Properties get(Long id) throws NamingException, SQLException, Exception {
+		
+		if (log.isDebugEnabled())
+			log.debug("PropertiesBO:get(" + id + ")");
+		
 		try {
+			
 			return PropertiesDAO.getInstance().get(id);
+			
 		} catch (NamingException e) {
-			log.error("Erro ao buscar propriedade. Falha ao acessar datasource. " + e);
+			log.error(Messages.ERROR_DATASOURCE, e);
 			throw e;
 		} catch (SQLException e) {
-			log.error("Erro ao buscar propriedade. Falha ao acessar base de dados. " + e);
+			log.error(Messages.ERROR_DATABASE, e);
 			throw e;
 		} catch (Exception e) {
-			log.error("Erro ao buscar propriedade. " + e);
+			log.error(Messages.ERROR_SHOW, e);			
 			throw e;
 		}
 	}
 
 	public List<Properties> list() throws NamingException, SQLException, Exception {
+		
+		if (log.isDebugEnabled())
+			log.debug("PropertiesBO:list()");
+		
 		try {
+			
 			return PropertiesDAO.getInstance().list();
+			
 		} catch (NamingException e) {
-			log.error("Erro ao listar propriedade. [classe: " + getClass().getName() + "; m�todo: list; erro: "
-					+ e.getMessage() + "]");
+			log.error(Messages.ERROR_DATASOURCE, e);
 			throw e;
 		} catch (SQLException e) {
-			log.error("Erro ao listar propriedade. [classe: " + getClass().getName() + "; m�todo: list; erro: "
-					+ e.getMessage() + "]");
+			log.error(Messages.ERROR_DATABASE, e);
 			throw e;
 		} catch (Exception e) {
-			log.error("Erro ao listar propriedade. [classe: " + getClass().getName() + "; m�todo: list; erro: "
-					+ e.getMessage() + "]");
+			log.error(Messages.ERROR_SHOW, e);			
 			throw e;
 		}
 	}

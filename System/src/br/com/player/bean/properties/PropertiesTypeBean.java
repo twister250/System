@@ -14,83 +14,229 @@ import org.apache.log4j.Logger;
 import br.com.player.bean.AbstractBean;
 import br.com.player.bo.properties.PropertiesTypeBO;
 import br.com.player.entity.PropertiesType;
-import br.com.player.entity.User;
-import br.com.player.wrapper.SessionContext;
+import br.com.player.util.Constants;
+import br.com.player.util.Messages;
 
 @ManagedBean(name = "propertiesTypeBean", eager = true)
 @ApplicationScoped
 public class PropertiesTypeBean extends AbstractBean {
+
 	private static final long serialVersionUID = 1L;
 	private static Logger log = Logger.getLogger(PropertiesBean.class);
 	private PropertiesType type;
 	private List<PropertiesType> types;
+
 	@ManagedProperty("#{propertiesTypeBO}")
-	private PropertiesTypeBO typeBO;
+	private PropertiesTypeBO propertiesTypeBO;
 
 	@PostConstruct
 	public void init() {
+
+		if (log.isDebugEnabled())
+			log.debug("PropertiesTypeBean:init()");
+
+		type = new PropertiesType();
+
 		try {
-			this.types = (this.types == null ? this.typeBO.list() : this.types);
+
+			types = propertiesTypeBO.list();
+
 		} catch (NamingException e) {
-			log.error(e);
+			log.error(Messages.ERROR_DATASOURCE + ":" + Messages.ERROR_INIT_BEAN + "["
+					+ PropertiesTypeBean.class.getSimpleName() + "]", e);
 		} catch (SQLException e) {
-			log.error(e);
+			log.error(Messages.ERROR_DATABASE + ":" + Messages.ERROR_INIT_BEAN + "["
+					+ PropertiesTypeBean.class.getSimpleName() + "]", e);
 		} catch (Exception e) {
-			log.error(e);
+			log.error(Messages.ERROR_INIT_BEAN + "[" + PropertiesTypeBean.class.getSimpleName(), e);
 		}
 	}
 
 	public String create() {
-		User user = SessionContext.getInstance().getUserSession();
-		if (user == null) {
-			addWarningMessage(null, "Usu�rio n�o encontrado", "Por favor fa�a login para poder utilizar o sistema.");
-			return "/player/access/login.xhtml";
+
+		if (log.isDebugEnabled())
+			log.debug("PropertiesTypeBean:create()");
+
+		if (!isUserSessionAlive()) {
+			return getUrl(Constants.URI_LOGIN, true);
 		}
+
 		try {
-			setType(this.typeBO.create(this.type));
-			return "/player/properties/show.xhtml";
+
+			propertiesTypeBO.create(type);
+
+			setTypes(propertiesTypeBO.list());
+
+			addInfoMessage(null, "Info", "Classificação \"" + type.getName() + "\" criada com sucesso.");
+
+			return getUrl(PropertiesType.class, Constants.URI_LIST, null, false);
+
 		} catch (NamingException e) {
-			log.error("Erro ao criar Type. Falha ao acessar datasource. " + e.getMessage());
+			log.error(Messages.ERROR_DATASOURCE, e);
+			addErrorMessage(null, Messages.ERROR_CREATE, Messages.ERROR_DATASOURCE);
 			return null;
 		} catch (SQLException e) {
-			log.error("Erro ao criar Type. Falha ao acessar banco de dados. " + e.getMessage());
+			log.error(Messages.ERROR_DATASOURCE, e);
+			addErrorMessage(null, Messages.ERROR_CREATE, Messages.ERROR_DATABASE);
 			return null;
 		} catch (Exception e) {
-			log.error("Erro ao criar Type. " + e.getMessage());
+			log.error(Messages.ERROR_CREATE, e);
+			addErrorMessage(null, Messages.ERROR_CREATE, e.getMessage());
+			return null;
 		}
-		return null;
 	}
 
 	public String edit() {
-		return "";
+
+		if (log.isDebugEnabled())
+			log.debug("PropertiesTypeBean:edit()");
+
+		if (!isUserSessionAlive()) {
+			return getUrl(Constants.URI_LOGIN, true);
+		}
+
+		try {
+
+			propertiesTypeBO.edit(type);
+
+			setTypes(propertiesTypeBO.list());
+
+			addInfoMessage(null, "Info", "Classificação \"" + type.getName() + "\" alterada com sucesso.");
+
+			return getUrl(PropertiesType.class, Constants.URI_LIST, null, true);
+
+		} catch (NamingException e) {
+			log.error(Messages.ERROR_DATASOURCE, e);
+			addErrorMessage(null, Messages.ERROR_EDIT, Messages.ERROR_DATASOURCE);
+			return null;
+		} catch (SQLException e) {
+			log.error(Messages.ERROR_DATABASE, e);
+			addErrorMessage(null, Messages.ERROR_EDIT, Messages.ERROR_DATABASE);
+			return null;
+		} catch (Exception e) {
+			log.error(Messages.ERROR_EDIT, e);
+			addErrorMessage(null, Messages.ERROR_EDIT, e.getMessage());
+			return null;
+		}
 	}
 
-	public String delete() {
-		return "";
+	public String delete(String id) {
+
+		if (log.isDebugEnabled())
+			log.debug("PropertiesTypeBean:delete(" + id + ")");
+
+		try {
+
+			propertiesTypeBO.delete(Long.valueOf(Long.parseLong(id)));
+
+			setTypes(propertiesTypeBO.list());
+
+			log.info("Classificação " + id + " removida com sucesso.");
+
+			addInfoMessage(null, "Info", "Classificação " + id + " removida com sucesso.");
+
+			return getUrl(PropertiesType.class, Constants.URI_LIST, null, true);
+
+		} catch (NamingException e) {
+			log.error(Messages.ERROR_DATASOURCE, e);
+			addErrorMessage(null, Messages.ERROR_REMOVE, Messages.ERROR_DATASOURCE);
+			return null;
+		} catch (SQLException e) {
+			log.error(Messages.ERROR_DATABASE, e);
+			addErrorMessage(null, Messages.ERROR_REMOVE, Messages.ERROR_DATABASE);
+			return null;
+		} catch (Exception e) {
+			log.error(Messages.ERROR_REMOVE, e);
+			addErrorMessage(null, Messages.ERROR_REMOVE, e.getMessage());
+			return null;
+		}
+	}
+
+	public String show(String id) {
+
+		if (log.isDebugEnabled())
+			log.debug("PropertiesTypeBean:show(" + id + ")");
+
+		if (!isUserSessionAlive()) {
+			return getUrl(Constants.URI_LOGIN, true);
+		}
+
+		try {
+
+			if ((id == null) || (id.equals(""))) {
+				addWarningMessage(null, "Aviso", "Id da classificação não informado.");
+				return null;
+			}
+
+			setType(propertiesTypeBO.get(Long.valueOf(Long.parseLong(id))));
+
+			return getUrl(PropertiesType.class, Constants.URI_SHOW, null, true);
+
+		} catch (NamingException e) {
+			log.error(Messages.ERROR_DATASOURCE, e);
+			addErrorMessage(null, Messages.ERROR_SHOW, Messages.ERROR_DATASOURCE);
+			return null;
+		} catch (SQLException e) {
+			log.error(Messages.ERROR_DATABASE, e);
+			addErrorMessage(null, Messages.ERROR_SHOW, Messages.ERROR_DATABASE);
+			return null;
+		} catch (Exception e) {
+			log.error(Messages.ERROR_SHOW, e);
+			addErrorMessage(null, Messages.ERROR_SHOW, e.getMessage());
+			return null;
+		}
 	}
 
 	public String list() {
-		return "";
+
+		setType(new PropertiesType());
+
+		if (log.isDebugEnabled())
+			log.debug("PropertiesTypeBean:list()");
+
+		if (!isUserSessionAlive()) {
+			return getUrl(Constants.URI_LOGIN, true);
+		}
+
+		try {
+
+			setTypes(propertiesTypeBO.list());
+
+			return getUrl(PropertiesType.class, Constants.URI_LIST, null, true);
+
+		} catch (NamingException e) {
+			log.error(Messages.ERROR_DATASOURCE, e);
+			addErrorMessage(null, Messages.ERROR_LIST, Messages.ERROR_DATASOURCE);
+			return null;
+		} catch (SQLException e) {
+			log.error(Messages.ERROR_DATABASE, e);
+			addErrorMessage(null, Messages.ERROR_LIST, Messages.ERROR_DATABASE);
+			return null;
+		} catch (Exception e) {
+			log.error(Messages.ERROR_LIST, e);
+			addErrorMessage(null, Messages.ERROR_LIST, e.getMessage());
+			return null;
+		}
 	}
 
 	public PropertiesType getType() {
-		return this.type;
+		return type;
 	}
 
 	public void setType(PropertiesType type) {
 		this.type = type;
 	}
 
-	public PropertiesTypeBO getTypeBO() {
-		return this.typeBO;
+	public PropertiesTypeBO getPropertiesTypeBO() {
+		return propertiesTypeBO;
 	}
 
-	public void setTypeBO(PropertiesTypeBO typeBO) {
-		this.typeBO = typeBO;
+	public void setPropertiesTypeBO(PropertiesTypeBO propertiesTypeBO) {
+		this.propertiesTypeBO = propertiesTypeBO;
 	}
 
 	public List<PropertiesType> getTypes() {
-		return this.types;
+		return types;
 	}
 
 	public void setTypes(List<PropertiesType> types) {

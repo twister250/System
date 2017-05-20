@@ -28,7 +28,7 @@ public class LoginFilter implements Filter {
 
 		HttpSession session = ((HttpServletRequest) request).getSession();
 		if (session != null) {
-			user = (User) session.getAttribute("userlogged");
+			user = (User) session.getAttribute(USER_ATTRIBUTE);
 		}
 		if (user == null) {
 			String contextPath = ((HttpServletRequest) request).getContextPath();

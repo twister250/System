@@ -8,12 +8,14 @@
 <h:head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<h:outputStylesheet library="theme1" name="css/player.css" />
-	<title>Property</title>
+	<title>Propriedade</title>
 </h:head>
 <h:body>
-	<p:link outcome="/player/home" value="Home" />
+	<p:link outcome="/player/home" value="Página Inicial" />
 	<p:separator />
-	<p:link outcome="/player/properties/list" value="Criar" />
+	
+	<p:link outcome="/player/properties/list" value="Listar Propriedades" />
+	
 	<p:panelGrid columns="2">
 
 		<h:outputLabel value="Nome:" />
@@ -25,24 +27,18 @@
 		<h:outputLabel value="Tipo:" />
 		<h:outputText id="type" value="#{propertiesBean.property.type.name}" />
 
-		<h:outputLabel value="Data de Criação:"
-			rendered="#{not empty propertiesBean.property.created}" />
-		<h:outputText id="created" value="#{propertiesBean.property.created}"
-			rendered="#{not empty propertiesBean.property.created}">
+		<h:outputLabel value="Data de Criação:" rendered="#{not empty propertiesBean.property.created}" />
+		<h:outputText id="created" value="#{propertiesBean.property.created}" rendered="#{not empty propertiesBean.property.created}">
 			<f:convertDateTime pattern="dd/MM/yyyy" />
 		</h:outputText>
 
-		<h:outputLabel value="Alterado em:"
-			rendered="#{not empty propertiesBean.property.modified}" />
-		<h:outputText value="#{propertiesBean.property.modified}"
-			rendered="#{not empty propertiesBean.property.modified}">
+		<h:outputLabel value="Alterado em:" rendered="#{not empty propertiesBean.property.modified}" />
+		<h:outputText value="#{propertiesBean.property.modified}" rendered="#{not empty propertiesBean.property.modified}">
 			<f:convertDateTime pattern="dd/MM/yyyy" />
 		</h:outputText>
 
-		<h:outputLabel value="Criado Por:"
-			rendered="#{not empty propertiesBean.property.user}" />
-		<h:outputText value="#{propertiesBean.property.user.name}"
-			rendered="#{not empty propertiesBean.property.user}" />
+		<h:outputLabel value="Criado Por:" rendered="#{not empty propertiesBean.property.user}" />
+		<h:outputText value="#{propertiesBean.property.user.name}" rendered="#{not empty propertiesBean.property.user}" />
 
 	</p:panelGrid>
 

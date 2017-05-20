@@ -3,6 +3,7 @@ package br.com.player.bean;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -14,7 +15,45 @@ import br.com.player.entity.Video;
 import br.com.player.wrapper.SessionContext;
 
 public abstract class AbstractBean implements Serializable {
+
 	private static final long serialVersionUID = 1L;
+
+	public String getUrl(String uri, boolean redirect) {
+		
+		StringBuilder url = new StringBuilder();
+		
+		url.append(uri);
+		url.append("?");
+		url.append("faces-redirect=");
+		url.append(redirect);
+		
+		return url.toString();
+	}
+	
+	public String getUrl(Class<?> clazz, String uri, Map<String, String> params, boolean redirect) {
+
+		if (clazz != null) {
+
+			StringBuilder url = new StringBuilder();
+			url.append("/player/");
+			url.append(clazz.getSimpleName().toLowerCase());
+			url.append("/");
+			url.append(uri);
+			url.append("?");
+
+			if (params != null && !params.isEmpty()) {
+				for (Map.Entry<String, String> param : params.entrySet()) {
+					url.append(param.getKey());
+					url.append("=");
+					url.append(param.getValue());
+					url.append("&");
+				}
+			}
+			url.append("faces-redirect="+redirect);
+			return url.toString();
+		}
+		return uri;
+	}
 
 	public void addErrorMessage(String key, String summary, String message) {
 		addMessage(key, summary, message, FacesMessage.SEVERITY_ERROR);
@@ -34,8 +73,16 @@ public abstract class AbstractBean implements Serializable {
 		context.addMessage(key, facesMessage);
 	}
 
-	public boolean validateUserSession() {
-		return SessionContext.getInstance().getUserSession() != null;
+	public boolean isUserSessionAlive() {
+		
+		User user = SessionContext.getInstance().getUserSession();
+
+		if (user == null) {
+			addWarningMessage(null, "Sessão expirada.", "Necessário realizar login novamente.");
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	public List<String> isFormValid(Object entity) {

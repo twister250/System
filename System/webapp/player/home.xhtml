@@ -13,48 +13,12 @@
 <h:body>
 	<h1>Home</h1>
 
-	<p:link outcome="/player/properties/list" value="Properties" />
-
-	<!-- 
-		<p:dataTable var="property" value="#{propertiesBean.properties}">			
-			<p:column headerText="NOME">
-				<h:outputText value="#{property.name}"/>
-			</p:column>
-			<p:column headerText="VALOR">
-				<h:outputText value="#{property.value}"/>
-			</p:column>
-			<p:column headerText="TIPO">				
-				<p:link outcome="/player/type/show" value="#{property.type.name}">
-					<f:param name="id" value="#{property.type.id}"/>
-				</p:link>
-			</p:column>
-			<p:column headerText="DATA CRIAÇÃO">
-				<h:outputText value="#{property.created}">
-					<f:convertDateTime pattern="dd/MM/yyyy"/>
-				</h:outputText>
-			</p:column>
-			<p:column headerText="DATA MODIFICAÇÃO">
-				<h:outputText value="#{property.modified}">
-					<f:convertDateTime pattern="dd/MM/yyyy"/>
-				</h:outputText>
-			</p:column>
-			<p:column headerText="USUÁRIO">				
-				<p:link outcome="/player/user/show" value="#{property.user.name}">
-					<f:param name="id" value="#{property.user.id}"/>
-				</p:link>
-			</p:column>
-			<p:column headerText="DELETAR">
-				<h:form>
-					<p:commandButton action="#{propertiesBean.delete(property.id)}" icon="fa fa-remove" update="growl"/>
-				</h:form>
-			</p:column>
-		</p:dataTable>
-		 -->
-
-	<p:tabMenu activeIndex="0">
-		<p:menuitem value="Properties" outcome="/player/properties/list" />
-		<p:menuitem value="Criar" outcome="/player/properties/create"></p:menuitem>
+<h:form>
+	<p:tabMenu activeIndex="0">	
+		<p:menuitem value="Propriedade" action="#{propertiesBean.list}"/>
+		<p:menuitem value="Classificação" action="#{propertiesTypeBean.list}"/>		
 	</p:tabMenu>
+</h:form>
 
 	<p:growl id="growl" showDetail="true" showSummary="false" life="20000" />
 </h:body>

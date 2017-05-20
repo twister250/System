@@ -13,17 +13,17 @@
 
 	<h:outputStylesheet library="theme1" name="css/player.css" />
 
-	<title>Propriedade</title>
+	<title>Editar Tipo de Propriedade</title>
 
 </h:head>
 
 <h:body>
 
-	<p:link outcome="/player/home" value="Home" />
+	<p:link outcome="/player/home" value="Página Inicial" />
 
 	<p:separator />
 
-	<p:link outcome="/player/properties/list" value="Criar" />
+	<p:link outcome="/player/propertiestype/list" value="Tipos de Propriedades" />
 
 	<h:form>
 
@@ -31,30 +31,18 @@
 
 			<p:outputLabel for="name" value="Nome:" />
 
-			<p:inputText id="name" value="#{propertiesBean.property.name}" />
+			<p:inputText id="name" value="#{propertiesTypeBean.type.name}" />
 
-			<p:outputLabel for="value" value="Valor:" />
+			<p:outputLabel for="description" value="Descrição:" />
 
-			<p:inputText id="value" value="#{propertiesBean.property.value}" />
-
-			<p:outputLabel for="type" value="Tipo:" />
-
-			<h:selectOneMenu id="type" converter="typeConverter"
-				value="#{propertiesBean.property.type}">
-
-				<f:selectItems value="#{propertiesTypeBean.types}" var="type"
-					itemValue="#{type}" itemLabel="#{type.name}" />
-
-			</h:selectOneMenu>
+			<p:inputText id="description" value="#{propertiesTypeBean.type.description}" />
 
 		</h:panelGrid>
 
-		<p:commandButton value="Editar" action="#{propertiesBean.edit}"
+		<p:commandButton value="Editar" action="#{propertiesTypeBean.edit}"
 			update="growl" />
 
 	</h:form>
-
-	<p:link outcome="/player/home" value="Home" />
 
 	<p:growl id="growl" showDetail="true" showSummary="true" life="20000" />
 

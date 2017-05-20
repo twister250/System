@@ -1,7 +1,6 @@
 package br.com.player.dao.properties;
 
 import java.io.Serializable;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,150 +11,291 @@ import java.util.List;
 
 import javax.naming.NamingException;
 
+import org.apache.log4j.Logger;
+
 import br.com.player.dao.factory.DAO;
 import br.com.player.entity.PropertiesType;
 import br.com.player.entity.User;
+import br.com.player.util.Messages;
 
 public class PropertiesTypeDAO extends DAO implements Serializable {
-	private PreparedStatement preparedStatement = null;
-	private ResultSet resultSet = null;
+
+	private static final long serialVersionUID = 1L;
+	private static Logger log = Logger.getLogger(PropertiesTypeDAO.class);
+	
 	private static List<PropertiesType> list = null;
 	private static PropertiesType type = null;
 	private static PropertiesTypeDAO propertiesTypeDAO = null;
 	private static Timestamp timestamp = null;
-	private static final long serialVersionUID = 1L;
+	private static User user = null;
+	
+	private PreparedStatement preparedStatement = null;
+	private ResultSet resultSet = null;
 
 	public static PropertiesTypeDAO getInstance() {
 		return propertiesTypeDAO == null ? new PropertiesTypeDAO() : propertiesTypeDAO;
 	}
 
-	public PropertiesType create(PropertiesType type, User user) throws NamingException, SQLException, Exception {
-		try {
-			timestamp = new Timestamp(Calendar.getInstance().getTimeInMillis());
+	public long create(PropertiesType type, User user) throws NamingException, SQLException, Exception {
 
-			this.preparedStatement = getConnection().prepareStatement(
-					"insert into properties_type (name, description, created, modified, user_id) values (?,?,?,?,?)",
-					1);
-			this.preparedStatement.setString(1, type.getName());
-			this.preparedStatement.setString(2, type.getDescription());
-			this.preparedStatement.setTimestamp(3, timestamp);
-			this.preparedStatement.setNull(4, 91);
-			this.preparedStatement.setLong(5, user.getId().longValue());
-			this.preparedStatement.executeUpdate();
-			this.resultSet = this.preparedStatement.getGeneratedKeys();
-			if ((this.resultSet != null) && (this.resultSet.next())) {
-				type.setId(Long.valueOf(this.resultSet.getLong(1)));
-				type.setCreated(new Date(timestamp.getTime()));
-				return type;
+		long id = -1;
+		
+		try {
+
+			timestamp = new Timestamp(Calendar.getInstance().getTimeInMillis());
+			
+			preparedStatement = getConnection().prepareStatement(SQLPropertiesType.SQL_INSERT, PreparedStatement.RETURN_GENERATED_KEYS);
+			preparedStatement.setString(1, type.getName());
+			preparedStatement.setString(2, type.getDescription());
+			preparedStatement.setTimestamp(3, timestamp);
+			preparedStatement.setNull(4, 91);
+			preparedStatement.setLong(5, user.getId().longValue());
+			preparedStatement.executeUpdate();
+			resultSet = preparedStatement.getGeneratedKeys();
+			
+			if (resultSet == null)
+				throw new Exception("Erro ao inserir classificação no banco de dados.");
+
+			while (resultSet.next()) {
+				id = Long.valueOf(resultSet.getLong(1));
 			}
-			return null;
-		} catch (SQLException e) {
-			throw e;
+			
+			return id;
+
 		} catch (NamingException e) {
+			log.error(Messages.ERROR_INS, e);
+			throw e;
+		} catch (SQLException e) {
+			log.error(Messages.ERROR_INS, e);
+			throw e;
+		} catch (Exception e) {
+			log.error(Messages.ERROR_INS, e);
 			throw e;
 		} finally {
-			if (this.preparedStatement != null) {
-				this.preparedStatement.close();
-			}
-			if (this.resultSet != null) {
-				this.resultSet.close();
-			}
+			
+			if (preparedStatement != null && !preparedStatement.isClosed())
+				preparedStatement.close();
+
+			if (resultSet != null && !resultSet.isClosed())
+				resultSet.close();
+
 			try {
+			
 				closeConnection();
+			
 			} catch (NamingException e) {
+				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
 				throw e;
 			} catch (SQLException e) {
+				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
 				throw e;
 			} catch (Exception e) {
+				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
 				throw e;
 			}
 		}
 	}
 
 	public PropertiesType get(Long id) throws NamingException, SQLException, Exception {
-		try {
-			this.preparedStatement = getConnection().prepareStatement(
-					"select id, name, description, created, modified, user_id from properties_type where id = ?");
-			this.preparedStatement.setLong(1, id.longValue());
-			this.resultSet = this.preparedStatement.executeQuery();
-			while (this.resultSet.next()) {
-				type = new PropertiesType();
-				type.setId(Long.valueOf(this.resultSet.getLong("ID")));
-				type.setName(this.resultSet.getString("NAME"));
-				type.setDescription(this.resultSet.getString("DESCRIPTION"));
-				type.setCreated(this.resultSet.getDate("CREATED"));
-				type.setModified(this.resultSet.getDate("MODIFIED"));
 
-				User user = new User();
-				user.setId(Long.valueOf(this.resultSet.getLong("USER_ID")));
+		try {
+
+			preparedStatement = getConnection().prepareStatement(SQLPropertiesType.SQL_GET);
+			preparedStatement.setLong(1, id.longValue());
+			resultSet = preparedStatement.executeQuery();
+
+			while (resultSet.next()) {
+				
+				type = new PropertiesType();
+				type.setId(Long.valueOf(resultSet.getLong(SQLPropertiesType.ID)));
+				type.setName(resultSet.getString(SQLPropertiesType.NAME));
+				type.setDescription(resultSet.getString(SQLPropertiesType.DESCRIPTION));
+				type.setCreated(resultSet.getDate(SQLPropertiesType.CREATED));
+				type.setModified(resultSet.getDate(SQLPropertiesType.MODIFIED));
+				
+				user = new User();
+				user.setId(Long.valueOf(resultSet.getLong(SQLPropertiesType.USER_ID)));
 				type.setUser(user);
 			}
+			
 			return type;
+
 		} catch (NamingException e) {
+			log.error(Messages.ERROR_GET, e);
 			throw e;
 		} catch (SQLException e) {
+			log.error(Messages.ERROR_GET, e);
 			throw e;
 		} catch (Exception e) {
+			log.error(Messages.ERROR_GET, e);
 			throw e;
 		} finally {
-			if (this.preparedStatement != null) {
-				this.preparedStatement.close();
-			}
-			if (this.resultSet != null) {
-				this.resultSet.close();
-			}
+			
+			if (preparedStatement != null && !preparedStatement.isClosed())
+				preparedStatement.close();
+
+			if (resultSet != null && !resultSet.isClosed())
+				resultSet.close();
+
 			try {
+			
 				closeConnection();
+			
 			} catch (NamingException e) {
+				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
 				throw e;
 			} catch (SQLException e) {
+				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
 				throw e;
 			} catch (Exception e) {
+				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
+				throw e;
+			}
+		}
+	}
+	
+	public long update(PropertiesType type, User user) throws NamingException, SQLException, Exception {
+
+		if (log.isDebugEnabled())
+			log.debug("PropertiesTypeDAO:update(" + type.toString() + ")");
+		
+		try {
+
+			timestamp = new Timestamp(Calendar.getInstance().getTimeInMillis());
+
+			preparedStatement = getConnection().prepareStatement(SQLPropertiesType.SQL_UPDATE, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			preparedStatement.setString(1, type.getName());
+			preparedStatement.setString(2, type.getDescription());
+			preparedStatement.setTimestamp(3, timestamp);
+			preparedStatement.setLong(4, user.getId().longValue());
+			preparedStatement.setLong(5, type.getId().longValue());
+
+			return preparedStatement.executeUpdate();
+
+		} catch (NamingException e) {
+			log.error(Messages.ERROR_UPD, e);
+			throw e;
+		} catch (SQLException e) {
+			log.error(Messages.ERROR_UPD, e);
+			throw e;
+		} catch (Exception e) {
+			log.error(Messages.ERROR_UPD, e);
+			throw e;
+		} finally {
+			
+			if (preparedStatement != null && !preparedStatement.isClosed())
+				preparedStatement.close();
+
+			try {
+
+				closeConnection();
+
+			} catch (NamingException e) {
+				log.error(Messages.ERROR_CLOSE_CONNECTION, e);				
+				throw e;
+			} catch (SQLException e) {
+				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
+				throw e;
+			} catch (Exception e) {
+				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
 				throw e;
 			}
 		}
 	}
 
-	public List<PropertiesType> list() throws NamingException, SQLException, Exception {
+	public long delete(Long id) throws NamingException, SQLException, Exception {
+		
 		try {
-			this.preparedStatement = getConnection()
-					.prepareStatement("select id, name, description, created, modified, user_id from properties_type");
-			this.resultSet = this.preparedStatement.executeQuery();
-			list = new ArrayList();
-			while (this.resultSet.next()) {
-				User user = new User();
-				user.setId(Long.valueOf(this.resultSet.getLong("USER_ID")));
+			
+			preparedStatement = getConnection().prepareStatement(SQLPropertiesType.SQL_DELETE);
+			preparedStatement.setLong(1, id.longValue());
+			
+			return preparedStatement.executeLargeUpdate();
+
+		} catch (NamingException e) {
+			log.error(Messages.ERROR_DEL, e);
+			throw e;
+		} catch (SQLException e) {
+			log.error(Messages.ERROR_DEL, e);
+			throw e;
+		} catch (Exception e) {
+			log.error(Messages.ERROR_DEL, e);
+			throw e;
+		} finally {
+			
+			if (preparedStatement != null && !preparedStatement.isClosed())
+				preparedStatement.close();			
+			
+			try {
+				
+				closeConnection();
+				
+			} catch (NamingException e) {
+				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
+				throw e;
+			} catch (SQLException e) {
+				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
+				throw e;
+			} catch (Exception e) {
+				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
+				throw e;
+			}
+		}
+	}
+	
+	public List<PropertiesType> list() throws NamingException, SQLException, Exception {
+
+		try {
+
+			preparedStatement = getConnection().prepareStatement(SQLPropertiesType.SQL_LIST);
+			resultSet = preparedStatement.executeQuery();
+			list = new ArrayList<PropertiesType>();
+
+			while (resultSet.next()) {
+				
+				user.setId(Long.valueOf(resultSet.getLong(SQLPropertiesType.USER_ID)));
 
 				type = new PropertiesType();
-				type.setId(Long.valueOf(this.resultSet.getLong("ID")));
-				type.setName(this.resultSet.getString("NAME"));
-				type.setDescription(this.resultSet.getString("DESCRIPTION"));
-				type.setCreated(this.resultSet.getDate("CREATED"));
-				type.setModified(this.resultSet.getDate("MODIFIED"));
+				type.setId(Long.valueOf(resultSet.getLong(SQLPropertiesType.ID)));
+				type.setName(resultSet.getString(SQLPropertiesType.NAME));
+				type.setDescription(resultSet.getString(SQLPropertiesType.DESCRIPTION));
+				type.setCreated(resultSet.getDate(SQLPropertiesType.CREATED));
+				type.setModified(resultSet.getDate(SQLPropertiesType.MODIFIED));
 				type.setUser(user);
 				list.add(type);
 			}
+			
 			return list;
+
 		} catch (NamingException e) {
+			log.error(Messages.ERROR_LIST, e);
 			throw e;
 		} catch (SQLException e) {
-			throw e;
+			log.error(Messages.ERROR_LIST, e);
+			throw e;	
 		} catch (Exception e) {
+			log.error(Messages.ERROR_LIST, e);
 			throw e;
 		} finally {
-			if (this.preparedStatement != null) {
-				this.preparedStatement.close();
-			}
-			if (this.resultSet != null) {
-				this.resultSet.close();
-			}
+			
+			if (preparedStatement != null && !preparedStatement.isClosed())
+				preparedStatement.close();
+
+			if (resultSet != null && !resultSet.isClosed())
+				resultSet.close();
+
 			try {
+				
 				closeConnection();
+				
 			} catch (NamingException e) {
+				log.error(Messages.ERROR_CLOSE_CONNECTION);
 				throw e;
 			} catch (SQLException e) {
+				log.error(Messages.ERROR_CLOSE_CONNECTION);
 				throw e;
 			} catch (Exception e) {
+				log.error(Messages.ERROR_CLOSE_CONNECTION);
 				throw e;
 			}
 		}

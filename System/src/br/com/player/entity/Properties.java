@@ -70,13 +70,13 @@ public class Properties implements Entity {
 	public int hashCode() {
 		int prime = 31;
 		int result = 1;
-		result = 31 * result + (this.created == null ? 0 : this.created.hashCode());
-		result = 31 * result + (this.id == null ? 0 : this.id.hashCode());
-		result = 31 * result + (this.modified == null ? 0 : this.modified.hashCode());
-		result = 31 * result + (this.name == null ? 0 : this.name.hashCode());
-		result = 31 * result + (this.type == null ? 0 : this.type.hashCode());
-		result = 31 * result + (this.user == null ? 0 : this.user.hashCode());
-		result = 31 * result + (this.value == null ? 0 : this.value.hashCode());
+		result = prime * result + (this.created == null ? 0 : this.created.hashCode());
+		result = prime * result + (this.id == null ? 0 : this.id.hashCode());
+		result = prime * result + (this.modified == null ? 0 : this.modified.hashCode());
+		result = prime * result + (this.name == null ? 0 : this.name.hashCode());
+		result = prime * result + (this.type == null ? 0 : this.type.hashCode());
+		result = prime * result + (this.user == null ? 0 : this.user.hashCode());
+		result = prime * result + (this.value == null ? 0 : this.value.hashCode());
 		return result;
 	}
 
@@ -142,4 +142,12 @@ public class Properties implements Entity {
 		}
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "Properties [id=" + id + ", name=" + name + ", value=" + value + ", type=" + type + ", created="
+				+ created + ", modified=" + modified + ", user=" + user + "]";
+	}
+	
+	
 }

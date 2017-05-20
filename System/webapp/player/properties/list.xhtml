@@ -8,10 +8,11 @@
 
 <h:head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>Properties List</title>
+	<title>Propriedades</title>
 </h:head>
 <h:body>
-	<h1>Properties List</h1>
+	
+	<h1><h:outputText>Propriedades</h:outputText></h1>
 
 	<br></br>
 
@@ -26,15 +27,14 @@
 	<p:dataTable var="property" value="#{propertiesBean.properties}">
 		<p:column headerText="NOME">
 			<h:form>
-				<p:commandLink action="#{propertiesBean.show(property.id)}"
-					value="#{property.name}" ajax="false" />
+				<p:commandLink action="#{propertiesBean.show(property.id)}" value="#{property.name}" ajax="false" />
 			</h:form>
 		</p:column>
 		<p:column headerText="VALOR">
 			<h:outputText value="#{property.value}" />
 		</p:column>
 		<p:column headerText="TIPO">
-			<p:link outcome="/player/type/show" value="#{property.type.name}">
+			<p:link outcome="/player/propertiestype/show" value="#{property.type.name}">
 				<f:param name="id" value="#{property.type.id}" />
 			</p:link>
 		</p:column>
@@ -55,9 +55,7 @@
 		</p:column>
 		<p:column headerText="DELETAR">
 			<h:form>
-				<p:commandButton action="#{propertiesBean.delete(property.id)}"
-					icon="fa fa-remove" update="growl">
-				</p:commandButton>
+				<p:commandButton action="#{propertiesBean.delete(property.id)}" icon="fa fa-remove" update="growl"/>
 			</h:form>
 		</p:column>
 	</p:dataTable>
