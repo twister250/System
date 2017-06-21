@@ -49,11 +49,9 @@ public class PropertiesBean extends AbstractBean {
 			properties = propertiesBO.list();
 
 		} catch (NamingException e) {
-			log.error(Messages.ERROR_DATASOURCE + ":" + Messages.ERROR_INIT_BEAN + "["
-					+ PropertiesTypeBean.class.getSimpleName() + "]", e);
+			log.error(Messages.ERROR_INIT_BEAN + Messages.ERROR_DATASOURCE + "[" + PropertiesTypeBean.class.getSimpleName() + "]", e);
 		} catch (SQLException e) {
-			log.error(Messages.ERROR_DATABASE + ":" + Messages.ERROR_INIT_BEAN + "["
-					+ PropertiesTypeBean.class.getSimpleName() + "]", e);
+			log.error(Messages.ERROR_INIT_BEAN + Messages.ERROR_DATABASE + "[" + PropertiesTypeBean.class.getSimpleName() + "]", e);
 		} catch (Exception e) {
 			log.error(Messages.ERROR_INIT_BEAN + "[" + PropertiesTypeBean.class.getSimpleName(), e);
 		}
@@ -76,18 +74,18 @@ public class PropertiesBean extends AbstractBean {
 
 			addInfoMessage(null, "Info", "Propriedade \"" + property.getName() + "\" criada com sucesso.");
 
-			return getUrl(Properties.class, Constants.URI_LIST, null, true);
+			return list();
 
 		} catch (NamingException e) {
-			log.error(Messages.ERROR_DATASOURCE, e);
+			log.error(Messages.ERROR_CREATE + Messages.ERROR_DATASOURCE + "[" + property.toString() + "]", e);
 			addErrorMessage(null, Messages.ERROR_CREATE, Messages.ERROR_DATASOURCE);
 			return null;
 		} catch (SQLException e) {
-			log.error(Messages.ERROR_DATABASE, e);
+			log.error(Messages.ERROR_CREATE + Messages.ERROR_DATABASE + "[" + property.toString() + "]", e);
 			addErrorMessage(null, Messages.ERROR_CREATE, Messages.ERROR_DATABASE);
 			return null;
 		} catch (Exception e) {
-			log.error(Messages.ERROR_CREATE, e);
+			log.error(Messages.ERROR_CREATE + "[" + property.toString() + "]", e);
 			addErrorMessage(null, Messages.ERROR_CREATE, e.getMessage());
 			return null;
 		}
@@ -110,18 +108,18 @@ public class PropertiesBean extends AbstractBean {
 
 			addInfoMessage(null, "Info", "Propriedade \"" + property.getName() + "\" alterada com sucesso.");
 
-			return getUrl(Properties.class, Constants.URI_LIST, null, true);
+			return list();
 
 		} catch (NamingException e) {
-			log.error(Messages.ERROR_DATASOURCE, e);
+			log.error(Messages.ERROR_EDIT + Messages.ERROR_DATASOURCE + "[" + property.toString() + "]", e);
 			addErrorMessage(null, Messages.ERROR_EDIT, Messages.ERROR_DATASOURCE);
 			return null;
 		} catch (SQLException e) {
-			log.error(Messages.ERROR_DATABASE, e);
+			log.error(Messages.ERROR_EDIT + Messages.ERROR_DATABASE + "[" + property.toString() + "]", e);
 			addErrorMessage(null, Messages.ERROR_EDIT, Messages.ERROR_DATABASE);
 			return null;
 		} catch (Exception e) {
-			log.error(Messages.ERROR_EDIT, e);
+			log.error(Messages.ERROR_EDIT + "[" + property.toString() + "]", e);
 			addErrorMessage(null, Messages.ERROR_EDIT, e.getMessage());
 			return null;
 		}
@@ -144,18 +142,18 @@ public class PropertiesBean extends AbstractBean {
 
 			addInfoMessage(null, "Info", "Propriedade " + id + " removida com sucesso.");
 
-			return getUrl(Properties.class, Constants.URI_LIST, null, true);
+			return list();
 
 		} catch (NamingException e) {
-			log.error(Messages.ERROR_DATASOURCE, e);
+			log.error(Messages.ERROR_REMOVE + Messages.ERROR_DATASOURCE + "[id=" + id + "]", e);
 			addErrorMessage(null, Messages.ERROR_REMOVE, Messages.ERROR_DATASOURCE);
 			return null;
 		} catch (SQLException e) {
-			log.error(Messages.ERROR_DATABASE, e);
+			log.error(Messages.ERROR_REMOVE + Messages.ERROR_DATABASE + "[id=" + id + "]", e);
 			addErrorMessage(null, Messages.ERROR_REMOVE, Messages.ERROR_DATABASE);
 			return null;
 		} catch (Exception e) {
-			log.error(Messages.ERROR_REMOVE, e);
+			log.error(Messages.ERROR_REMOVE + "[" + id + "]", e);
 			addErrorMessage(null, Messages.ERROR_REMOVE, e.getMessage());
 			return null;
 		}
@@ -182,11 +180,11 @@ public class PropertiesBean extends AbstractBean {
 			return getUrl(Properties.class, Constants.URI_SHOW, null, true);
 
 		} catch (NamingException e) {
-			log.error(Messages.ERROR_DATASOURCE, e);
+			log.error(Messages.ERROR_SHOW + Messages.ERROR_DATASOURCE + "[id=" + id + "]", e);
 			addErrorMessage(null, Messages.ERROR_SHOW, Messages.ERROR_DATASOURCE);
 			return null;
 		} catch (SQLException e) {
-			log.error(Messages.ERROR_DATABASE, e);
+			log.error(Messages.ERROR_SHOW + Messages.ERROR_DATABASE + "[id=" + id + "]", e);
 			addErrorMessage(null, Messages.ERROR_SHOW, Messages.ERROR_DATABASE);
 			return null;
 		} catch (Exception e) {
@@ -214,11 +212,11 @@ public class PropertiesBean extends AbstractBean {
 			return getUrl(Properties.class, Constants.URI_LIST, null, true);
 
 		} catch (NamingException e) {
-			log.error(Messages.ERROR_DATASOURCE, e);
+			log.error(Messages.ERROR_LIST + Messages.ERROR_DATASOURCE, e);
 			addErrorMessage(null, Messages.ERROR_LIST, Messages.ERROR_DATASOURCE);
 			return null;
 		} catch (SQLException e) {
-			log.error(Messages.ERROR_DATABASE, e);
+			log.error(Messages.ERROR_LIST + Messages.ERROR_DATABASE, e);
 			addErrorMessage(null, Messages.ERROR_LIST, Messages.ERROR_DATABASE);
 			return null;
 		} catch (Exception e) {

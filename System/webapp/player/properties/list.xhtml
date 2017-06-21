@@ -18,11 +18,11 @@
 
 	<p:link outcome="/player/home" value="Home" />
 
-	<p:separator />
+	<br></br>
 
 	<p:link outcome="/player/properties/create" value="Criar" />
 
-	<p:separator />
+	<p:separator/>
 
 	<p:dataTable var="property" value="#{propertiesBean.properties}">
 		<p:column headerText="NOME">
@@ -34,18 +34,18 @@
 			<h:outputText value="#{property.value}" />
 		</p:column>
 		<p:column headerText="TIPO">
-			<p:link outcome="/player/propertiestype/show" value="#{property.type.name}">
-				<f:param name="id" value="#{property.type.id}" />
-			</p:link>
+			<h:form>
+				<p:commandLink action="#{propertiesTypeBean.show(property.type.id)}" value="#{property.type.name}"/>
+			</h:form>			
 		</p:column>
 		<p:column headerText="DATA CRIAÇÃO">
 			<h:outputText value="#{property.created}">
-				<f:convertDateTime pattern="dd/MM/yyyy" />
+				<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
 			</h:outputText>
 		</p:column>
 		<p:column headerText="DATA MODIFICAÇÃO">
 			<h:outputText value="#{property.modified}">
-				<f:convertDateTime pattern="dd/MM/yyyy" />
+				<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
 			</h:outputText>
 		</p:column>
 		<p:column headerText="USUÁRIO">

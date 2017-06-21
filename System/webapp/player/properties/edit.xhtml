@@ -20,10 +20,8 @@
 <h:body>
 
 	<p:link outcome="/player/home" value="Home" />
-
-	<p:separator />
-
-	<p:link outcome="/player/properties/list" value="Criar" />
+	
+	<p:separator/>
 
 	<h:form>
 
@@ -39,12 +37,8 @@
 
 			<p:outputLabel for="type" value="Tipo:" />
 
-			<h:selectOneMenu id="type" converter="typeConverter"
-				value="#{propertiesBean.property.type}">
-
-				<f:selectItems value="#{propertiesTypeBean.types}" var="type"
-					itemValue="#{type}" itemLabel="#{type.name}" />
-
+			<h:selectOneMenu id="type" converter="typeConverter" value="#{propertiesBean.property.type}">				
+				<f:selectItems value="#{propertiesTypeBean.types}" var="type" itemValue="#{type}" itemLabel="#{type.name}" />
 			</h:selectOneMenu>
 
 		</h:panelGrid>
@@ -53,8 +47,6 @@
 			update="growl" />
 
 	</h:form>
-
-	<p:link outcome="/player/home" value="Home" />
 
 	<p:growl id="growl" showDetail="true" showSummary="true" life="20000" />
 

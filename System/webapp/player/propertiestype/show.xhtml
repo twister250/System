@@ -14,9 +14,8 @@
 	
 	<h:body>
 		<p:link outcome="/player/home" value="Página Inicial" />
+
 		<p:separator />
-		
-		<p:link outcome="/player/propertiestype/list" value="Listar Tipos de Propriedades" />
 		
 		<p:panelGrid columns="2">
 	
@@ -28,12 +27,12 @@
 	
 			<h:outputLabel value="Data de Criação:" rendered="#{not empty propertiesTypeBean.type.created}" />
 			<h:outputText id="created" value="#{propertiesTypeBean.type.created}" rendered="#{not empty propertiesTypeBean.type.created}">
-				<f:convertDateTime pattern="dd/MM/yyyy" />
+				<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
 			</h:outputText>
 	
 			<h:outputLabel value="Alterado em:" rendered="#{not empty propertiesTypeBean.type.modified}" />
 			<h:outputText value="#{propertiesTypeBean.type.modified}" rendered="#{not empty propertiesTypeBean.type.modified}">
-				<f:convertDateTime pattern="dd/MM/yyyy" />
+				<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
 			</h:outputText>
 	
 			<h:outputLabel value="Criado Por:" rendered="#{not empty propertiesTypeBean.type.user}" />

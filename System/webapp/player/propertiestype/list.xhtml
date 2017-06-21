@@ -32,12 +32,12 @@
 			</p:column>
 			<p:column headerText="CRIADO">
 				<h:outputText value="#{type.created}">
-					<f:convertDateTime pattern="dd/MM/yyyy" />
+					<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
 				</h:outputText>
 			</p:column>
 			<p:column headerText="MODIFICADO">
 				<h:outputText value="#{type.modified}">
-					<f:convertDateTime pattern="dd/MM/yyyy" />
+					<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
 				</h:outputText>
 			</p:column>
 			<p:column headerText="USUÁRIO">
@@ -47,8 +47,7 @@
 			</p:column>
 			<p:column headerText="DELETAR">
 				<h:form>
-					<p:commandButton action="#{propertiesTypeBean.delete(type.id)}"
-						icon="fa fa-remove" update="growl"></p:commandButton>
+					<p:commandButton action="#{propertiesTypeBean.delete(type.id)}" icon="fa fa-remove" update="growl"></p:commandButton>
 				</h:form>
 			</p:column>
 		</p:dataTable>

@@ -1,6 +1,7 @@
 package br.com.player.dao.properties;
 
 import java.io.Serializable;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -63,13 +64,13 @@ public class PropertiesTypeDAO extends DAO implements Serializable {
 			return id;
 
 		} catch (NamingException e) {
-			log.error(Messages.ERROR_INS, e);
+			log.error(Messages.ERROR_INS + Messages.ERROR_DATASOURCE + "[" + type.toString() + "]", e);
 			throw e;
 		} catch (SQLException e) {
-			log.error(Messages.ERROR_INS, e);
+			log.error(Messages.ERROR_INS + Messages.ERROR_DATABASE + "[" + type.toString() + "]", e);
 			throw e;
 		} catch (Exception e) {
-			log.error(Messages.ERROR_INS, e);
+			log.error(Messages.ERROR_INS + "[" + type.toString() + "]", e);
 			throw e;
 		} finally {
 			
@@ -84,13 +85,13 @@ public class PropertiesTypeDAO extends DAO implements Serializable {
 				closeConnection();
 			
 			} catch (NamingException e) {
-				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
+				log.error(Messages.ERROR_CLOSE_CONNECTION + Messages.ERROR_DATASOURCE + "[" + type.toString() + "]", e);
 				throw e;
 			} catch (SQLException e) {
-				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
+				log.error(Messages.ERROR_CLOSE_CONNECTION + Messages.ERROR_DATABASE + "[" + type.toString() + "]", e);
 				throw e;
 			} catch (Exception e) {
-				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
+				log.error(Messages.ERROR_CLOSE_CONNECTION + "[" + type.toString() + "]", e);
 				throw e;
 			}
 		}
@@ -110,24 +111,31 @@ public class PropertiesTypeDAO extends DAO implements Serializable {
 				type.setId(Long.valueOf(resultSet.getLong(SQLPropertiesType.ID)));
 				type.setName(resultSet.getString(SQLPropertiesType.NAME));
 				type.setDescription(resultSet.getString(SQLPropertiesType.DESCRIPTION));
-				type.setCreated(resultSet.getDate(SQLPropertiesType.CREATED));
-				type.setModified(resultSet.getDate(SQLPropertiesType.MODIFIED));
+				
+				timestamp = resultSet.getTimestamp(SQLPropertiesType.CREATED);
+				if (timestamp != null)
+					type.setCreated(new Date(timestamp.getTime()));
+				
+				timestamp = resultSet.getTimestamp(SQLPropertiesType.MODIFIED);
+				if (timestamp != null)
+					type.setModified(new Date(timestamp.getTime()));
 				
 				user = new User();
 				user.setId(Long.valueOf(resultSet.getLong(SQLPropertiesType.USER_ID)));
+				user.setName(resultSet.getString(SQLPropertiesType.USER_NAME));
 				type.setUser(user);
 			}
 			
 			return type;
 
 		} catch (NamingException e) {
-			log.error(Messages.ERROR_GET, e);
+			log.error(Messages.ERROR_GET + Messages.ERROR_DATASOURCE + "[id=" + id + "]", e);
 			throw e;
 		} catch (SQLException e) {
-			log.error(Messages.ERROR_GET, e);
+			log.error(Messages.ERROR_GET + Messages.ERROR_DATABASE + "[id=" + id + "]", e);
 			throw e;
 		} catch (Exception e) {
-			log.error(Messages.ERROR_GET, e);
+			log.error(Messages.ERROR_GET + "[id=" + id + "]", e);
 			throw e;
 		} finally {
 			
@@ -142,13 +150,13 @@ public class PropertiesTypeDAO extends DAO implements Serializable {
 				closeConnection();
 			
 			} catch (NamingException e) {
-				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
+				log.error(Messages.ERROR_CLOSE_CONNECTION + Messages.ERROR_DATASOURCE + "[id=" + id + "]", e);
 				throw e;
 			} catch (SQLException e) {
-				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
+				log.error(Messages.ERROR_CLOSE_CONNECTION + Messages.ERROR_DATABASE + "[id=" + id + "]", e);
 				throw e;
 			} catch (Exception e) {
-				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
+				log.error(Messages.ERROR_CLOSE_CONNECTION + "[id=" + id + "]", e);
 				throw e;
 			}
 		}
@@ -173,13 +181,13 @@ public class PropertiesTypeDAO extends DAO implements Serializable {
 			return preparedStatement.executeUpdate();
 
 		} catch (NamingException e) {
-			log.error(Messages.ERROR_UPD, e);
+			log.error(Messages.ERROR_UPD + Messages.ERROR_DATASOURCE + "[" + type.toString() + "]", e);
 			throw e;
 		} catch (SQLException e) {
-			log.error(Messages.ERROR_UPD, e);
+			log.error(Messages.ERROR_UPD + Messages.ERROR_DATABASE + "[" + type.toString() + "]", e);
 			throw e;
 		} catch (Exception e) {
-			log.error(Messages.ERROR_UPD, e);
+			log.error(Messages.ERROR_UPD + "[" + type.toString() + "]", e);
 			throw e;
 		} finally {
 			
@@ -191,13 +199,13 @@ public class PropertiesTypeDAO extends DAO implements Serializable {
 				closeConnection();
 
 			} catch (NamingException e) {
-				log.error(Messages.ERROR_CLOSE_CONNECTION, e);				
+				log.error(Messages.ERROR_CLOSE_CONNECTION + Messages.ERROR_DATASOURCE + "[" + type.toString() + "]", e);				
 				throw e;
 			} catch (SQLException e) {
-				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
+				log.error(Messages.ERROR_CLOSE_CONNECTION + Messages.ERROR_DATASOURCE + "[" + type.toString() + "]", e);
 				throw e;
 			} catch (Exception e) {
-				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
+				log.error(Messages.ERROR_CLOSE_CONNECTION + "[" + type.toString() + "]", e);
 				throw e;
 			}
 		}
@@ -210,16 +218,16 @@ public class PropertiesTypeDAO extends DAO implements Serializable {
 			preparedStatement = getConnection().prepareStatement(SQLPropertiesType.SQL_DELETE);
 			preparedStatement.setLong(1, id.longValue());
 			
-			return preparedStatement.executeLargeUpdate();
+			return preparedStatement.executeUpdate();
 
 		} catch (NamingException e) {
-			log.error(Messages.ERROR_DEL, e);
+			log.error(Messages.ERROR_DEL + Messages.ERROR_DATASOURCE + "[id=" + id + "]", e);
 			throw e;
 		} catch (SQLException e) {
-			log.error(Messages.ERROR_DEL, e);
+			log.error(Messages.ERROR_DEL + Messages.ERROR_DATABASE + "[id=" + id + "]", e);
 			throw e;
 		} catch (Exception e) {
-			log.error(Messages.ERROR_DEL, e);
+			log.error(Messages.ERROR_DEL + "[id=" + id + "]", e);
 			throw e;
 		} finally {
 			
@@ -231,13 +239,13 @@ public class PropertiesTypeDAO extends DAO implements Serializable {
 				closeConnection();
 				
 			} catch (NamingException e) {
-				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
+				log.error(Messages.ERROR_CLOSE_CONNECTION + Messages.ERROR_DATASOURCE + "[id=" + id + "]", e);
 				throw e;
 			} catch (SQLException e) {
-				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
+				log.error(Messages.ERROR_CLOSE_CONNECTION + Messages.ERROR_DATABASE + "[id=" + id + "]", e);
 				throw e;
 			} catch (Exception e) {
-				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
+				log.error(Messages.ERROR_CLOSE_CONNECTION + "[id=" + id + "]", e);
 				throw e;
 			}
 		}
@@ -252,26 +260,35 @@ public class PropertiesTypeDAO extends DAO implements Serializable {
 			list = new ArrayList<PropertiesType>();
 
 			while (resultSet.next()) {
-				
-				user.setId(Long.valueOf(resultSet.getLong(SQLPropertiesType.USER_ID)));
 
 				type = new PropertiesType();
 				type.setId(Long.valueOf(resultSet.getLong(SQLPropertiesType.ID)));
 				type.setName(resultSet.getString(SQLPropertiesType.NAME));
 				type.setDescription(resultSet.getString(SQLPropertiesType.DESCRIPTION));
-				type.setCreated(resultSet.getDate(SQLPropertiesType.CREATED));
-				type.setModified(resultSet.getDate(SQLPropertiesType.MODIFIED));
+				
+				timestamp = resultSet.getTimestamp(SQLPropertiesType.CREATED);
+				if (timestamp != null)
+					type.setCreated(new Date(timestamp.getTime()));
+				
+				timestamp = resultSet.getTimestamp(SQLPropertiesType.MODIFIED);
+				if (timestamp != null)
+					type.setModified(new Date(timestamp.getTime()));
+
+				user = new User();
+				user.setId(Long.valueOf(resultSet.getLong(SQLPropertiesType.USER_ID)));
+				user.setName(resultSet.getString(SQLPropertiesType.USER_NAME));
 				type.setUser(user);
+				
 				list.add(type);
 			}
 			
 			return list;
 
 		} catch (NamingException e) {
-			log.error(Messages.ERROR_LIST, e);
+			log.error(Messages.ERROR_LIST + Messages.ERROR_DATASOURCE, e);
 			throw e;
 		} catch (SQLException e) {
-			log.error(Messages.ERROR_LIST, e);
+			log.error(Messages.ERROR_LIST + Messages.ERROR_DATABASE, e);
 			throw e;	
 		} catch (Exception e) {
 			log.error(Messages.ERROR_LIST, e);
@@ -289,13 +306,13 @@ public class PropertiesTypeDAO extends DAO implements Serializable {
 				closeConnection();
 				
 			} catch (NamingException e) {
-				log.error(Messages.ERROR_CLOSE_CONNECTION);
+				log.error(Messages.ERROR_CLOSE_CONNECTION + Messages.ERROR_DATASOURCE, e);
 				throw e;
 			} catch (SQLException e) {
-				log.error(Messages.ERROR_CLOSE_CONNECTION);
+				log.error(Messages.ERROR_CLOSE_CONNECTION + Messages.ERROR_DATABASE, e);
 				throw e;
 			} catch (Exception e) {
-				log.error(Messages.ERROR_CLOSE_CONNECTION);
+				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
 				throw e;
 			}
 		}

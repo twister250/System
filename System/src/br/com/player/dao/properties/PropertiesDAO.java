@@ -1,6 +1,7 @@
 package br.com.player.dao.properties;
 
 import java.io.Serializable;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -66,10 +67,10 @@ public class PropertiesDAO extends DAO implements Serializable {
 			return id;
 
 		} catch (NamingException e) {
-			log.error(Messages.ERROR_INS, e);
+			log.error(Messages.ERROR_INS + "[" + Messages.ERROR_DATASOURCE + "]", e);
 			throw e;
 		} catch (SQLException e) {
-			log.error(Messages.ERROR_INS, e);
+			log.error(Messages.ERROR_INS + "[" + Messages.ERROR_DATABASE + "]", e);
 			throw e;
 		} catch (Exception e) {
 			log.error(Messages.ERROR_INS, e);
@@ -130,10 +131,10 @@ public class PropertiesDAO extends DAO implements Serializable {
 			return property;
 			
 		} catch (NamingException e) {
-			log.error(Messages.ERROR_GET, e);
+			log.error(Messages.ERROR_GET + "[" + Messages.ERROR_DATASOURCE + "]", e);
 			throw e;
 		} catch (SQLException e) {
-			log.error(Messages.ERROR_GET, e);
+			log.error(Messages.ERROR_GET + "[" + Messages.ERROR_DATABASE + "]", e);
 			throw e;
 		} catch (Exception e) {
 			log.error(Messages.ERROR_GET, e);
@@ -183,10 +184,10 @@ public class PropertiesDAO extends DAO implements Serializable {
 			return preparedStatement.executeUpdate();
 
 		} catch (NamingException e) {
-			log.error(Messages.ERROR_UPD, e);
+			log.error(Messages.ERROR_UPD + "[" + Messages.ERROR_DATASOURCE + "]", e);
 			throw e;
 		} catch (SQLException e) {
-			log.error(Messages.ERROR_UPD, e);
+			log.error(Messages.ERROR_UPD + "[" + Messages.ERROR_DATABASE + "]", e);
 			throw e;
 		} catch (Exception e) {
 			log.error(Messages.ERROR_UPD, e);
@@ -223,10 +224,10 @@ public class PropertiesDAO extends DAO implements Serializable {
 			return preparedStatement.executeUpdate();
 			
 		} catch (NamingException e) {
-			log.error(Messages.ERROR_DEL, e);
+			log.error(Messages.ERROR_DEL + "[" + Messages.ERROR_DATASOURCE + "]", e);
 			throw e;
 		} catch (SQLException e) {
-			log.error(Messages.ERROR_DEL, e);
+			log.error(Messages.ERROR_DEL + "[" + Messages.ERROR_DATABASE + "]", e);
 			throw e;
 		} catch (Exception e) {
 			log.error(Messages.ERROR_DEL, e);
@@ -255,6 +256,8 @@ public class PropertiesDAO extends DAO implements Serializable {
 
 	public List<Properties> list() throws SQLException, NamingException, Exception {
 		
+		timestamp = null;
+		
 		try {
 		
 			preparedStatement = getConnection().prepareStatement(SQLProperties.SQL_LIST);
@@ -267,8 +270,14 @@ public class PropertiesDAO extends DAO implements Serializable {
 				property.setId(Long.valueOf(resultSet.getLong(SQLProperties.ID)));
 				property.setName(resultSet.getString(SQLProperties.NAME));
 				property.setValue(resultSet.getString(SQLProperties.VALUE));
-				property.setCreated(resultSet.getDate(SQLProperties.CREATED));
-				property.setModified(resultSet.getDate(SQLProperties.MODIFIED));
+				
+				timestamp = resultSet.getTimestamp(SQLProperties.CREATED);
+				if (timestamp != null)
+					property.setCreated(new Date(timestamp.getTime()));
+				
+				timestamp = resultSet.getTimestamp(SQLProperties.MODIFIED);
+				if (timestamp != null)
+					property.setModified(new Date(timestamp.getTime()));
 				
 				user = new User();
 				user.setId(Long.valueOf(resultSet.getLong(SQLProperties.USER_ID)));
@@ -287,13 +296,13 @@ public class PropertiesDAO extends DAO implements Serializable {
 			return list;
 			
 		} catch (NamingException e) {
-			log.error(Messages.ERROR_LIST);
+			log.error(Messages.ERROR_LIST + "[" + Messages.ERROR_DATASOURCE + "]", e);
 			throw e;
 		} catch (SQLException e) {
-			log.error(Messages.ERROR_LIST);
+			log.error(Messages.ERROR_LIST + "[" + Messages.ERROR_DATABASE + "]", e);
 			throw e;
 		} catch (Exception e) {
-			log.error(Messages.ERROR_LIST);
+			log.error(Messages.ERROR_LIST, e);
 			throw e;
 		} finally {
 			
@@ -308,13 +317,13 @@ public class PropertiesDAO extends DAO implements Serializable {
 				closeConnection();
 				
 			} catch (NamingException e) {
-				log.error(Messages.ERROR_CLOSE_CONNECTION);
+				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
 				throw e;
 			} catch (SQLException e) {
-				log.error(Messages.ERROR_CLOSE_CONNECTION);
+				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
 				throw e;
 			} catch (Exception e) {
-				log.error(Messages.ERROR_CLOSE_CONNECTION);
+				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
 				throw e;
 			}
 		}
