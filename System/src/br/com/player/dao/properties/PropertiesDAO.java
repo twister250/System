@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -39,8 +40,10 @@ public class PropertiesDAO extends DAO implements Serializable {
 		return propertiesDAO == null ? new PropertiesDAO() : propertiesDAO;
 	}
 
-	public long create(Properties property, User user) throws NamingException, SQLException, Exception {
-
+	public long create(Object object, User user) throws NamingException, SQLException, Exception {
+		
+		property = (Properties) object;
+		
 		long id = -1;
 
 		try {
@@ -52,17 +55,20 @@ public class PropertiesDAO extends DAO implements Serializable {
 			preparedStatement.setString(2, property.getValue());
 			preparedStatement.setLong(3, property.getType().getId().longValue());
 			preparedStatement.setTimestamp(4, timestamp);
-			preparedStatement.setNull(5, 91);
+			preparedStatement.setNull(5, Types.NULL);
 			preparedStatement.setLong(6, user.getId().longValue());
 			preparedStatement.executeUpdate();
 			resultSet = preparedStatement.getGeneratedKeys();
 
 			if (resultSet == null)
-				throw new Exception("Erro ao inserir propriedade no banco de dados.");
+				throw new SQLException("Erro ao inserir propriedade no banco de dados.");
 
 			while (resultSet.next()) {
 				id = Long.valueOf(resultSet.getLong(1));
 			}
+			
+			if (id < 0)
+				throw new SQLException(Messages.ERROR_INS);
 
 			return id;
 
@@ -164,8 +170,10 @@ public class PropertiesDAO extends DAO implements Serializable {
 		}
 	}
 
-	public long update(Properties property, User user) throws SQLException, NamingException, Exception {
+	public long update(Object object, User user) throws NamingException, SQLException, Exception {
 
+		property = (Properties) object;
+		
 		if (log.isDebugEnabled())
 			log.debug("PropertiesDAO:update(" + property.toString() + ")");
 		
@@ -214,7 +222,7 @@ public class PropertiesDAO extends DAO implements Serializable {
 		}
 	}
 
-	public long delete(Long id) throws SQLException, NamingException, Exception {
+	public long delete(Long id) throws NamingException, SQLException, Exception {
 
 		try {
 			
@@ -254,7 +262,7 @@ public class PropertiesDAO extends DAO implements Serializable {
 		}
 	}
 
-	public List<Properties> list() throws SQLException, NamingException, Exception {
+	public List<Properties> list() throws NamingException, SQLException, Exception {
 		
 		timestamp = null;
 		

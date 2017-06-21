@@ -37,8 +37,10 @@ public class PropertiesTypeDAO extends DAO implements Serializable {
 		return propertiesTypeDAO == null ? new PropertiesTypeDAO() : propertiesTypeDAO;
 	}
 
-	public long create(PropertiesType type, User user) throws NamingException, SQLException, Exception {
+	public long create(Object object, User user) throws NamingException, SQLException, Exception {
 
+		type = (PropertiesType) object;
+		
 		long id = -1;
 		
 		try {
@@ -162,8 +164,10 @@ public class PropertiesTypeDAO extends DAO implements Serializable {
 		}
 	}
 	
-	public long update(PropertiesType type, User user) throws NamingException, SQLException, Exception {
+	public long update(Object object, User user) throws NamingException, SQLException, Exception {
 
+		type = (PropertiesType) object;
+		
 		if (log.isDebugEnabled())
 			log.debug("PropertiesTypeDAO:update(" + type.toString() + ")");
 		

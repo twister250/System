@@ -4,13 +4,14 @@ import java.nio.file.Path;
 import java.sql.Date;
 
 public class Video {
-	private Date created;
-	private Date modified;
+
 	private Long id;
-	private String description;
 	private String name;
+	private String description;
 	private String fileType;
 	private Path file;
+	private Date created;	
+	private Date modified;
 
 	public Date getCreated() {
 		return this.created;
@@ -66,5 +67,11 @@ public class Video {
 
 	public void setFile(Path file) {
 		this.file = file;
+	}
+
+	@Override
+	public String toString() {
+		return "Video [created=" + created + ", modified=" + modified + ", id=" + id + ", description=" + description
+				+ ", name=" + name + ", fileType=" + fileType + ", file=" + file + "]";
 	}
 }

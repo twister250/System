@@ -3,6 +3,7 @@ package br.com.player.entity;
 import java.sql.Date;
 
 public class Properties implements Entity {
+	
 	private Long id;
 	private String name;
 	private String value;

@@ -5,44 +5,76 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.Calendar;
 import java.util.List;
 
 import javax.naming.NamingException;
 
+import org.apache.log4j.Logger;
+
 import br.com.player.dao.factory.DAO;
+import br.com.player.entity.User;
 import br.com.player.entity.Video;
 
 public class VideoDAO extends DAO {
+	
 	private static final long serialVersionUID = 1L;
-	private static List<Video> videoList = null;
+	private static Logger log = Logger.getLogger(VideoDAO.class);
+	
+	private static List<Video> list = null;
+	private static Video video = null;
+	private static VideoDAO videoDAO = null;
+	private static Timestamp timestamp = null;
+	private static User user = null;
+	
 	private static PreparedStatement preparedStatement = null;
 	private static ResultSet resultSet = null;
-	private static Timestamp timestamp = null;
-	private static Video video = null;
 
-	public long create(Video video) throws NamingException, SQLException, Exception {
-		long out = -1L;
+	public static VideoDAO getInstance() {
+		return videoDAO == null ? new VideoDAO() : videoDAO;
+	}
+	
+	public long create(Object object, User user) throws NamingException, SQLException, Exception {
+		
+		video = (Video) object;
+		
+		long id = -1;
+		
 		try {
+			
 			timestamp = new Timestamp(Calendar.getInstance().getTimeInMillis());
-			preparedStatement = getConnection().prepareStatement(
-					"insert into video (name, description, file, filetype, created, modified) values (?, ?, ?, ?, ?, ?)",
-					1);
+			
+			preparedStatement = getConnection().prepareStatement(SQLVideo.SQL_INSERT, PreparedStatement.RETURN_GENERATED_KEYS);
 			preparedStatement.setString(1, video.getName());
 			preparedStatement.setString(2, video.getDescription());
 			preparedStatement.setString(3, video.getFile().getName(video.getFile().getNameCount() - 1).toString());
 			preparedStatement.setString(4, video.getFileType());
 			preparedStatement.setTimestamp(5, timestamp);
-			preparedStatement.setNull(6, 91);
+			preparedStatement.setNull(6, Types.NULL);
 			preparedStatement.executeUpdate();
 			resultSet = preparedStatement.getGeneratedKeys();
-			if ((resultSet != null) && (resultSet.next())) {
-				out = resultSet.getLong(1);
+			
+			if (resultSet == null)
+				throw new SQLException("Erro ao inserir video no banco de dados.");
+			
+			while (resultSet.next()) {
+				id = Long.valueOf(resultSet.getLong(1));
 			}
-			return out;
-		} catch (SQLException e) {
-			throw e;
+			
+			if (id < 0)
+				throw new SQLException("Erro ao inserir video no banco de dados.");
+			
+			return id;
+			
 		} catch (NamingException e) {
+			log.error("Erro: Video");
+			throw e;
+		} catch (SQLException e) {
+			log.error("Erro: Video");
+			throw e;
+		} catch (Exception e) {
+			log.error("Erro: Video");
 			throw e;
 		} finally {
 			try {
@@ -52,7 +84,7 @@ public class VideoDAO extends DAO {
 			}
 		}
 	}
-
+		
 	public Video get(Long id) throws NamingException, SQLException, Exception {
 		try {
 			preparedStatement = getConnection().prepareStatement(
@@ -74,5 +106,17 @@ public class VideoDAO extends DAO {
 		} catch (NamingException e) {
 			throw e;
 		}
+	}
+	
+	public long update(Object object, User user) throws NamingException, SQLException, Exception {
+		return preparedStatement.executeUpdate();
+	}
+	
+	public long delete(Long id) throws NamingException, SQLException, Exception {
+		return preparedStatement.executeUpdate();
+	}
+	
+	public List<Video> list() throws NamingException, SQLException, Exception {
+		return list;
 	}
 }

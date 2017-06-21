@@ -16,7 +16,7 @@ import org.apache.log4j.Logger;
 import br.com.player.dao.factory.DAO;
 import br.com.player.entity.User;
 
-public class UserDAO extends DAO implements Serializable {
+public class UserDAO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private static Logger log = Logger.getLogger(UserDAO.class);
@@ -40,7 +40,7 @@ public class UserDAO extends DAO implements Serializable {
 		try {
 			timestamp = new Timestamp(Calendar.getInstance().getTimeInMillis());
 
-			this.preparedStatement = getConnection().prepareStatement(
+			this.preparedStatement = DAO.getConnection().prepareStatement(
 					"insert into user (name, email, password, created, modified) values (?,?,?,?,?)", 1);
 			this.preparedStatement.setString(1, user.getName());
 			this.preparedStatement.setString(2, user.getEmail());
@@ -74,7 +74,7 @@ public class UserDAO extends DAO implements Serializable {
 				this.resultSet.close();
 			}
 			try {
-				closeConnection();
+				DAO.closeConnection();
 			} catch (NamingException e) {
 				log.error("Erro ao fechar conexão.");
 				throw e;
@@ -91,7 +91,7 @@ public class UserDAO extends DAO implements Serializable {
 	public User get(Long id) throws NamingException, SQLException, Exception {
 
 		try {
-			this.preparedStatement = getConnection()
+			this.preparedStatement = DAO.getConnection()
 					.prepareStatement("select id, name, email, created, modified from user where id = ?");
 			this.preparedStatement.setLong(1, id.longValue());
 			this.resultSet = this.preparedStatement.executeQuery();
@@ -122,7 +122,7 @@ public class UserDAO extends DAO implements Serializable {
 				this.resultSet.close();
 			}
 			try {
-				closeConnection();
+				DAO.closeConnection();
 			} catch (NamingException e) {
 				throw e;
 			} catch (SQLException e) {
@@ -137,7 +137,7 @@ public class UserDAO extends DAO implements Serializable {
 		userList = new ArrayList<User>();
 
 		try {
-			this.preparedStatement = getConnection()
+			this.preparedStatement = DAO.getConnection()
 					.prepareStatement("select id, name, email, created from user where email = ? and password = ?");
 			this.preparedStatement.setString(1, email);
 			this.preparedStatement.setString(2, password);
@@ -172,7 +172,7 @@ public class UserDAO extends DAO implements Serializable {
 				this.resultSet.close();
 			}
 			try {
-				closeConnection();
+				DAO.closeConnection();
 			} catch (NamingException e) {
 				throw e;
 			} catch (SQLException e) {
