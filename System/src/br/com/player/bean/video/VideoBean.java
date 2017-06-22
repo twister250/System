@@ -9,6 +9,7 @@ import javax.faces.bean.ManagedProperty;
 import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
+import org.primefaces.model.UploadedFile;
 
 import br.com.player.bean.AbstractBean;
 import br.com.player.bo.video.VideoBO;
@@ -26,6 +27,8 @@ public class VideoBean extends AbstractBean {
 	private Video video;
 	
 	private List<Video> videos;
+	
+	private UploadedFile file;
 	
 	@ManagedProperty("#{videoBO}")
 	private VideoBO videoBO;
@@ -215,6 +218,10 @@ public class VideoBean extends AbstractBean {
 		return videoBO;
 	}
 	
+	public UploadedFile getFile() {
+		return file;
+	}
+	
 	public void setVideo(Video video) {
 		this.video = video;
 	}
@@ -225,5 +232,9 @@ public class VideoBean extends AbstractBean {
 	
 	public void setVideoBO(VideoBO videoBO) {
 		this.videoBO = videoBO;
-	}	
+	}
+	
+	public void setFile(UploadedFile file) {
+		this.file = file;
+	}
 }

@@ -14,5 +14,5 @@ public abstract class SQLVideo {
 	protected static final String SQL_GET 		= "select id, name, description, file, filetype, created, modified, user_id from video where id = ?";
 	protected static final String SQL_UPDATE 	= "update video set name = ?, description = ?, fileType = ?, file = ?, modified = ?, user_id = ? where id = ?";
 	protected static final String SQL_DELETE 	= "delete from video where id = ?";
-	protected static final String SQL_LIST 		= "select a.id, a.name, a.description, a.fileType, a.file, a.created, a.modified, b.id, b.name from video, user where a.user_id = b.id";
+	protected static final String SQL_LIST 		= "select a.id, a.name, a.description, a.fileType, a.file, a.created, a.modified, b.id, b.name from video a, user b where a.user_id = b.id";
 }

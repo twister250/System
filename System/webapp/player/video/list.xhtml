@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<h:head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Categorias</title>
+	</h:head>
+	<h:body>
+		<h1>Lista de Categorias</h1>
+	
+		<p:link outcome="/player/home" value="Home" />
+	
+		<p:separator />
+	
+		<p:link outcome="/player/video/create" value="Criar Categoria" />
+	
+		<p:separator />
+	
+		<p:dataTable var="video" value="#{videoBean.videos}">
+			<p:column headerText="NOME">
+				<h:form>
+					<p:commandLink action="#{videoBean.show(video.id)}" value="#{video.name}" ajax="false"></p:commandLink>
+				</h:form>
+			</p:column>
+			<p:column headerText="DESCRIÇÃO">
+				<h:outputText value="#{video.description}" />
+			</p:column>
+			<p:column headerText="CRIADO">
+				<h:outputText value="#{video.created}">
+					<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+				</h:outputText>
+			</p:column>
+			<p:column headerText="MODIFICADO">
+				<h:outputText value="#{video.modified}">
+					<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+				</h:outputText>
+			</p:column>
+			<p:column headerText="USUÁRIO">
+				<p:link outcome="/player/user/show" value="#{video.user.name}">
+					<f:param name="id" value="#{video.user.id}" />
+				</p:link>
+			</p:column>
+			<p:column headerText="DELETAR">
+				<h:form>
+					<p:commandButton action="#{videoBean.delete(video.id)}" icon="fa fa-remove" update="growl"></p:commandButton>
+				</h:form>
+			</p:column>
+		</p:dataTable>
+		<p:growl id="growl" showDetail="true" showSummary="false" life="20000" />
+	
+	</h:body>
+</html>

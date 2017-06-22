@@ -1,6 +1,5 @@
 package br.com.player.entity;
 
-import java.nio.file.Path;
 import java.sql.Date;
 
 public class Video {
@@ -9,8 +8,8 @@ public class Video {
 	private String name;
 	private String description;
 	private String fileType;
-	private Path file;
-	private Date created;	
+	private String file;
+	private Date created;
 	private Date modified;
 	private User user;
 
@@ -38,7 +37,7 @@ public class Video {
 		return this.fileType;
 	}
 
-	public Path getFile() {
+	public String getFile() {
 		return this.file;
 	}
 	
@@ -70,7 +69,7 @@ public class Video {
 		this.fileType = type;
 	}
 
-	public void setFile(Path file) {
+	public void setFile(String  file) {
 		this.file = file;
 	}
 

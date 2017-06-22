@@ -1,6 +1,5 @@
 package br.com.player.dao.video;
 
-import java.nio.file.Paths;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,6 +12,7 @@ import java.util.List;
 import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
+import org.primefaces.model.UploadedFile;
 
 import br.com.player.dao.factory.DAO;
 import br.com.player.entity.User;
@@ -53,7 +53,7 @@ public class VideoDAO extends DAO {
 			preparedStatement = getConnection().prepareStatement(SQLVideo.SQL_INSERT, PreparedStatement.RETURN_GENERATED_KEYS);
 			preparedStatement.setString(1, video.getName());
 			preparedStatement.setString(2, video.getDescription());
-			preparedStatement.setString(3, video.getFile().getName(video.getFile().getNameCount() - 1).toString());
+			preparedStatement.setString(3, video.getFile());
 			preparedStatement.setString(4, video.getFileType());
 			preparedStatement.setTimestamp(5, timestamp);
 			preparedStatement.setNull(6, Types.NULL);
@@ -121,7 +121,7 @@ public class VideoDAO extends DAO {
 				video.setId(Long.valueOf(resultSet.getLong(SQLVideo.ID)));
 				video.setName(resultSet.getString(SQLVideo.NAME));
 				video.setDescription(resultSet.getString(SQLVideo.DESCRIPTION));
-				video.setFile(Paths.get(resultSet.getString(SQLVideo.FILE), new String[0]));
+				video.setFile(resultSet.getString(SQLVideo.FILE));
 				video.setFileType(resultSet.getString(SQLVideo.FILETYPE));
 				video.setCreated(resultSet.getDate(SQLVideo.CREATED));
 				video.setModified(resultSet.getDate(SQLVideo.MODIFIED));
@@ -182,7 +182,7 @@ public class VideoDAO extends DAO {
 			preparedStatement.setString(1, video.getName());
 			preparedStatement.setString(2, video.getDescription());
 			preparedStatement.setString(3, video.getFileType());
-			preparedStatement.setString(4, video.getFile().getName(-1).toString());
+			preparedStatement.setString(4, video.getFile());
 			preparedStatement.setTimestamp(5, timestamp);
 			preparedStatement.setLong(6, user.getId().longValue());
 			preparedStatement.setLong(7, video.getId().longValue());
@@ -289,7 +289,7 @@ public class VideoDAO extends DAO {
 				video.setName(resultSet.getString(SQLVideo.NAME));
 				video.setDescription(resultSet.getString(SQLVideo.DESCRIPTION));
 				video.setFileType(resultSet.getString(SQLVideo.FILETYPE));
-				video.setFile(Paths.get(resultSet.getString(SQLVideo.FILE)));
+				video.setFile(resultSet.getString(SQLVideo.FILE));
 				video.setCreated(resultSet.getDate(SQLVideo.CREATED));
 				video.setModified(resultSet.getDate(SQLVideo.MODIFIED));
 				
