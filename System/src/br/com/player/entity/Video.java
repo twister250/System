@@ -12,6 +12,7 @@ public class Video {
 	private Path file;
 	private Date created;	
 	private Date modified;
+	private User user;
 
 	public Date getCreated() {
 		return this.created;
@@ -39,6 +40,10 @@ public class Video {
 
 	public Path getFile() {
 		return this.file;
+	}
+	
+	public User getUser() {
+		return user;
 	}
 
 	public void setCreated(Date created) {
@@ -69,9 +74,13 @@ public class Video {
 		this.file = file;
 	}
 
+	public void setUser(User user) {
+		this.user = user;
+	}
+	
 	@Override
 	public String toString() {
 		return "Video [created=" + created + ", modified=" + modified + ", id=" + id + ", description=" + description
 				+ ", name=" + name + ", fileType=" + fileType + ", file=" + file + "]";
-	}
+	}	
 }

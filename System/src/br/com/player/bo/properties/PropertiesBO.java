@@ -25,18 +25,20 @@ public class PropertiesBO {
 	public long create(Properties property) throws NamingException, SQLException, Exception {
 
 		if (log.isDebugEnabled())
-			log.debug("PropertiesBO:create(" + property + ")");
+			log.debug("[property=" + property.toString() + "]");
 
+		long id = -1;
+		
 		try {
 
-			long id = PropertiesDAO.getInstance().create(property, SessionContext.getInstance().getUserSession());
+			id = PropertiesDAO.getInstance().create(property, SessionContext.getInstance().getUserSession());
 
 			if (id <= 0) {
 				log.error("Erro ao inserir propriedade. [" + property.toString() + "]");
 				throw new Exception("Erro ao inserir propriedade. [" + property.toString() + "]");
-			} else {
-				return id;
 			}
+			
+			return id;			
 
 		} catch (NamingException e) {
 			log.error(Messages.ERROR_DATASOURCE + "[" + property.toString() + "]", e);
@@ -53,7 +55,7 @@ public class PropertiesBO {
 	public long delete(Long id) throws NamingException, SQLException, Exception {
 
 		if (log.isDebugEnabled())
-			log.debug("PropertiesBO:delete(" + id + ")");
+			log.debug("[id=" + id + "]");
 
 		try {
 			
@@ -74,16 +76,16 @@ public class PropertiesBO {
 	public Properties edit(Properties property) throws NamingException, SQLException, Exception {
 
 		if (log.isDebugEnabled())
-			log.debug("PropertiesBO:edit(" + property + ")");
+			log.debug("[property=" + property + "]");
 
 		try {
 			
-			if (PropertiesDAO.getInstance().update(property, SessionContext.getInstance().getUserSession()) > 0L) {
-				return property;
-			} else {
+			if (PropertiesDAO.getInstance().update(property, SessionContext.getInstance().getUserSession()) <= 0L) {
 				log.error("Erro ao alterar propriedade.");
 				throw new Exception("Erro ao alterar propriedade.");
-			}			
+			}
+			
+			return property;
 			
 		} catch (NamingException e) {
 			log.error(Messages.ERROR_DATASOURCE, e);
@@ -100,7 +102,7 @@ public class PropertiesBO {
 	public Properties get(Long id) throws NamingException, SQLException, Exception {
 		
 		if (log.isDebugEnabled())
-			log.debug("PropertiesBO:get(" + id + ")");
+			log.debug("id=" + id + "]");
 		
 		try {
 			
@@ -121,7 +123,7 @@ public class PropertiesBO {
 	public List<Properties> list() throws NamingException, SQLException, Exception {
 		
 		if (log.isDebugEnabled())
-			log.debug("PropertiesBO:list()");
+			log.debug("");
 		
 		try {
 			

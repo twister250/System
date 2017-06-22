@@ -42,6 +42,9 @@ public class PropertiesDAO extends DAO implements Serializable {
 
 	public long create(Object object, User user) throws NamingException, SQLException, Exception {
 		
+		if (log.isDebugEnabled())
+			log.debug("[object=" + object.toString() + ";user=" + user.toString() + "]");
+		
 		property = (Properties) object;
 		
 		long id = -1;
@@ -68,7 +71,7 @@ public class PropertiesDAO extends DAO implements Serializable {
 			}
 			
 			if (id < 0)
-				throw new SQLException(Messages.ERROR_INS);
+				throw new SQLException(Messages.ERROR_INS + "[" + property.toString() + "]");
 
 			return id;
 
@@ -79,7 +82,7 @@ public class PropertiesDAO extends DAO implements Serializable {
 			log.error(Messages.ERROR_INS + "[" + Messages.ERROR_DATABASE + "]", e);
 			throw e;
 		} catch (Exception e) {
-			log.error(Messages.ERROR_INS, e);
+			log.error(Messages.ERROR_INS + "["+property.toString()+"]", e);
 			throw e;
 		} finally {
 			
@@ -108,6 +111,9 @@ public class PropertiesDAO extends DAO implements Serializable {
 
 	public Properties get(Long id) throws NamingException, SQLException, Exception {
 
+		if (log.isDebugEnabled())
+			log.debug("[id=" + id + "]");
+		
 		try {
 			
 			preparedStatement = getConnection().prepareStatement(SQLProperties.SQL_GET);
@@ -172,10 +178,10 @@ public class PropertiesDAO extends DAO implements Serializable {
 
 	public long update(Object object, User user) throws NamingException, SQLException, Exception {
 
-		property = (Properties) object;
-		
 		if (log.isDebugEnabled())
-			log.debug("PropertiesDAO:update(" + property.toString() + ")");
+			log.debug("[object=" + object.toString() + ";user=" + user.toString() + "]");
+		
+		property = (Properties) object;		
 		
 		try {
 			
@@ -224,6 +230,9 @@ public class PropertiesDAO extends DAO implements Serializable {
 
 	public long delete(Long id) throws NamingException, SQLException, Exception {
 
+		if (log.isDebugEnabled())
+			log.debug("[id=" + id + "]");
+		
 		try {
 			
 			preparedStatement = getConnection().prepareStatement(SQLProperties.SQL_DELETE);
@@ -263,6 +272,9 @@ public class PropertiesDAO extends DAO implements Serializable {
 	}
 
 	public List<Properties> list() throws NamingException, SQLException, Exception {
+		
+		if (log.isDebugEnabled())
+			log.debug("[" + null + "]");
 		
 		timestamp = null;
 		
