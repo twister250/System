@@ -102,7 +102,7 @@ public class PropertiesBO {
 	public Properties get(Long id) throws NamingException, SQLException, Exception {
 		
 		if (log.isDebugEnabled())
-			log.debug("id=" + id + "]");
+			log.debug("[id=" + id + "]");
 		
 		try {
 			
@@ -128,6 +128,27 @@ public class PropertiesBO {
 		try {
 			
 			return PropertiesDAO.getInstance().list();
+			
+		} catch (NamingException e) {
+			log.error(Messages.ERROR_DATASOURCE, e);
+			throw e;
+		} catch (SQLException e) {
+			log.error(Messages.ERROR_DATABASE, e);
+			throw e;
+		} catch (Exception e) {
+			log.error(Messages.ERROR_SHOW, e);			
+			throw e;
+		}
+	}
+	
+	public List<Properties> findAllBy(Properties property) throws NamingException, SQLException, Exception {
+
+		if (log.isDebugEnabled())
+			log.debug("[" + property.toString() + "]");
+
+		try {
+			
+			return PropertiesDAO.getInstance().findAllBy(property);
 			
 		} catch (NamingException e) {
 			log.error(Messages.ERROR_DATASOURCE, e);

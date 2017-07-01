@@ -24,22 +24,19 @@
 	<br></br>
 
 	<p:link outcome="/player/video/list"
-		value="Videos" />
+		value="Tipos de Propriedades" />
 
 	<h:form enctype="multipart/form-data">
 
 		<h:panelGrid id="grid" columns="2" cellpadding="5">
 
+			<p:outputLabel for="name" value="Nome:" />
+
+			<p:inputText id="name" value="#{videoBean.video.name}" />
+
 			<p:outputLabel for="description" value="Descrição:" />
 
 			<p:inputText id="description" value="#{videoBean.video.description}" />
-			
-			<p:outputLabel for="videoType" value="Tipo:"/>
-						
-			<h:selectOneMenu id="videoType" converter="propertiesConverter" value="#{videoBean.video.videoType}">
-				<f:selectItem itemValue="" itemLabel="Selecione:" />
-				<f:selectItems value="#{videoBean.videoProperties}" var="videoProperty" itemValue="#{videoProperty}" itemLabel="#{videoProperty.name}" />
-			</h:selectOneMenu>
 			
 			<p:outputLabel for="file" value="Arquivo:" />
 			

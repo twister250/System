@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<h:head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<h:outputStylesheet library="theme1" name="css/player.css" />
+		<title>Tipo de Propriedade</title>
+	</h:head>
+	
+	<h:body>
+		<p:link outcome="/player/home" value="Página Inicial" />
+
+		<p:separator />
+		
+		<p:panelGrid columns="2">
+	
+			<h:outputLabel value="Nome:" />
+			<h:outputText id="name" value="#{propertiesTypeBean.type.name}" />
+	
+			<h:outputLabel value="Descrição:" />
+			<h:outputText id="value" value="#{propertiesTypeBean.type.description}" />
+	
+			<h:outputLabel value="Data de Criação:" rendered="#{not empty propertiesTypeBean.type.created}" />
+			<h:outputText id="created" value="#{propertiesTypeBean.type.created}" rendered="#{not empty propertiesTypeBean.type.created}">
+				<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+			</h:outputText>
+	
+			<h:outputLabel value="Alterado em:" rendered="#{not empty propertiesTypeBean.type.modified}" />
+			<h:outputText value="#{propertiesTypeBean.type.modified}" rendered="#{not empty propertiesTypeBean.type.modified}">
+				<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+			</h:outputText>
+	
+			<h:outputLabel value="Criado Por:" rendered="#{not empty propertiesTypeBean.type.user}" />
+			<h:outputText value="#{propertiesTypeBean.type.user.id}" rendered="#{not empty propertiesTypeBean.type.user}" />
+	
+		</p:panelGrid>
+	
+		<p:link outcome="/player/propertiestype/edit" value="Editar" />
+	
+	</h:body>
+</html>

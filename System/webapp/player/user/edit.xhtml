@@ -13,7 +13,7 @@
 
 	<h:outputStylesheet library="theme1" name="css/player.css" />
 
-	<title>Cadastrar Video</title>
+	<title>Editar Tipo de Propriedade</title>
 
 </h:head>
 
@@ -21,33 +21,26 @@
 
 	<p:link outcome="/player/home" value="Página Inicial" />
 
-	<br></br>
+	<p:separator />
 
-	<p:link outcome="/player/video/list"
-		value="Videos" />
+	<p:link outcome="/player/propertiestype/list" value="Tipos de Propriedades" />
 
-	<h:form enctype="multipart/form-data">
+	<h:form>
 
 		<h:panelGrid id="grid" columns="2" cellpadding="5">
 
+			<p:outputLabel for="name" value="Nome:" />
+
+			<p:inputText id="name" value="#{propertiesTypeBean.type.name}" />
+
 			<p:outputLabel for="description" value="Descrição:" />
 
-			<p:inputText id="description" value="#{videoBean.video.description}" />
-			
-			<p:outputLabel for="videoType" value="Tipo:"/>
-						
-			<h:selectOneMenu id="videoType" converter="propertiesConverter" value="#{videoBean.video.videoType}">
-				<f:selectItem itemValue="" itemLabel="Selecione:" />
-				<f:selectItems value="#{videoBean.videoProperties}" var="videoProperty" itemValue="#{videoProperty}" itemLabel="#{videoProperty.name}" />
-			</h:selectOneMenu>
-			
-			<p:outputLabel for="file" value="Arquivo:" />
-			
-			<p:fileUpload id="file" value="#{videoBean.file}" mode="simple" skinSimple="true" ajax="false"/>
+			<p:inputText id="description" value="#{propertiesTypeBean.type.description}" />
 
 		</h:panelGrid>
 
-		<p:commandButton value="Criar" action="#{videoBean.create}" ajax="false"/>
+		<p:commandButton value="Editar" action="#{propertiesTypeBean.edit}"
+			update="growl" />
 
 	</h:form>
 

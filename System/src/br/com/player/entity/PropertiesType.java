@@ -10,6 +10,15 @@ public class PropertiesType implements Entity {
 	private Date modified;
 	private User user;
 
+	public PropertiesType () {}
+	
+	public PropertiesType (Long id, String name) {
+		if (id != null)
+			this.id = id;
+		if (name != null)			
+			this.name = name;
+	}
+	
 	public Long getId() {
 		return this.id;
 	}

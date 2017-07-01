@@ -32,7 +32,7 @@ public class UserBean extends AbstractBean {
 	public void init() {
 
 		if (log.isDebugEnabled())
-			log.debug("UserBean:init()");
+			log.debug("[" + null + "]");
 
 		this.user = new User();
 	}
@@ -60,6 +60,7 @@ public class UserBean extends AbstractBean {
 		}
 
 		try {
+			
 			this.user = this.userBO.checkAccess(this.user);
 
 			if (this.user == null) {
@@ -71,6 +72,7 @@ public class UserBean extends AbstractBean {
 			SessionContext.getInstance().setAttribute("userlogged", this.user);
 			log.info("Login realizado. [email: " + this.user.getEmail() + "]");
 			return "/player/home.xhtml?faces-redirect=true";
+			
 		} catch (NamingException e) {
 			addErrorMessage(null, e.getCause().toString(), e.getMessage());
 			log.error("Erro ao conectar no banco de dados.", e);

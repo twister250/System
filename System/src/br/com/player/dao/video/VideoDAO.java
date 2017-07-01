@@ -1,5 +1,6 @@
 package br.com.player.dao.video;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,7 +13,6 @@ import java.util.List;
 import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
-import org.primefaces.model.UploadedFile;
 
 import br.com.player.dao.factory.DAO;
 import br.com.player.entity.User;
@@ -40,7 +40,7 @@ public class VideoDAO extends DAO {
 	public long create(Object object, User user) throws NamingException, SQLException, Exception {
 		
 		if (log.isDebugEnabled())
-			log.debug("[object=" + object.toString() + ";" + "user=" + user.toString() + "]");
+			log.debug("[" + object.toString() + ";" + user.toString() + "]");
 		
 		video = (Video) object;
 		
@@ -55,9 +55,12 @@ public class VideoDAO extends DAO {
 			preparedStatement.setString(2, video.getDescription());
 			preparedStatement.setString(3, video.getFile());
 			preparedStatement.setString(4, video.getFileType());
-			preparedStatement.setTimestamp(5, timestamp);
-			preparedStatement.setNull(6, Types.NULL);
+			preparedStatement.setLong(5, video.getVideoType().getId().longValue());
+			preparedStatement.setTimestamp(6, timestamp);
+			preparedStatement.setNull(7, Types.NULL);
+			preparedStatement.setLong(8, user.getId().longValue());
 			preparedStatement.executeUpdate();
+			
 			resultSet = preparedStatement.getGeneratedKeys();
 			
 			if (resultSet == null)
@@ -170,7 +173,7 @@ public class VideoDAO extends DAO {
 	public long update(Object object, User user) throws NamingException, SQLException, Exception {
 		
 		if (log.isDebugEnabled())
-			log.debug("[object=" + object.toString() + ";" + "user=" + user.toString() + "]");
+			log.debug("[" + object.toString() + ";" + user.toString() + "]");
 		
 		video = (Video) object;
 		
@@ -290,16 +293,22 @@ public class VideoDAO extends DAO {
 				video.setDescription(resultSet.getString(SQLVideo.DESCRIPTION));
 				video.setFileType(resultSet.getString(SQLVideo.FILETYPE));
 				video.setFile(resultSet.getString(SQLVideo.FILE));
-				video.setCreated(resultSet.getDate(SQLVideo.CREATED));
-				video.setModified(resultSet.getDate(SQLVideo.MODIFIED));
 				
+				timestamp = resultSet.getTimestamp(SQLVideo.CREATED);
+				if(timestamp != null)
+					video.setCreated(new Date(timestamp.getTime()));
+				
+				timestamp = resultSet.getTimestamp(SQLVideo.MODIFIED);
+				if(timestamp != null)
+					video.setModified(new Date(timestamp.getTime()));
+
 				user = new User();
 				user.setId(resultSet.getLong(SQLVideo.USER_ID));
 				user.setName(resultSet.getString(SQLVideo.USER_NAME));
 				
 				video.setUser(user);
 				
-				list.add(video);				
+				list.add(video);
 			}
 			
 			return list;

@@ -121,7 +121,7 @@ public class PropertiesTypeBO {
 	public List<PropertiesType> list() throws NamingException, SQLException, Exception {
 
 		if (log.isDebugEnabled())
-			log.debug("PropertiesType:list()");
+			log.debug("[" + null + "]");
 		try {
 
 			return PropertiesTypeDAO.getInstance().list();

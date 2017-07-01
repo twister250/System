@@ -113,9 +113,11 @@ public class PropertiesDAO extends DAO implements Serializable {
 
 		if (log.isDebugEnabled())
 			log.debug("[id=" + id + "]");
-		
+				
 		try {
-			
+
+			timestamp = null;
+
 			preparedStatement = getConnection().prepareStatement(SQLProperties.SQL_GET);
 			preparedStatement.setLong(1, id.longValue());
 			resultSet = preparedStatement.executeQuery();
@@ -126,8 +128,14 @@ public class PropertiesDAO extends DAO implements Serializable {
 				property.setId(Long.valueOf(resultSet.getLong(SQLProperties.ID)));
 				property.setName(resultSet.getString(SQLProperties.NAME));
 				property.setValue(resultSet.getString(SQLProperties.VALUE));
-				property.setCreated(resultSet.getDate(SQLProperties.CREATED));
-				property.setModified(resultSet.getDate(SQLProperties.MODIFIED));
+				
+				timestamp = resultSet.getTimestamp(SQLProperties.CREATED);
+				if (timestamp != null)
+					property.setCreated(new Date(timestamp.getTime()));
+				
+				timestamp = resultSet.getTimestamp(SQLProperties.MODIFIED);
+				if (timestamp != null)
+					property.setModified(new Date(timestamp.getTime()));
 
 				PropertiesType type = new PropertiesType();
 				type.setName(resultSet.getString(SQLProperties.TYPE_NAME));
@@ -137,6 +145,7 @@ public class PropertiesDAO extends DAO implements Serializable {
 				
 				user = new User();
 				user.setId(Long.valueOf(resultSet.getLong(SQLProperties.USER_ID)));
+				user.setName(resultSet.getString(SQLProperties.USER_NAME));
 				property.setUser(user);
 			}
 			
@@ -276,10 +285,10 @@ public class PropertiesDAO extends DAO implements Serializable {
 		if (log.isDebugEnabled())
 			log.debug("[" + null + "]");
 		
-		timestamp = null;
-		
 		try {
-		
+
+			timestamp = null;
+			
 			preparedStatement = getConnection().prepareStatement(SQLProperties.SQL_LIST);
 			resultSet = preparedStatement.executeQuery();
 			list = new ArrayList<Properties>();
@@ -347,5 +356,126 @@ public class PropertiesDAO extends DAO implements Serializable {
 				throw e;
 			}
 		}
+	}
+	
+	public List<Properties> findAllBy(Properties pojo) throws NamingException, SQLException, Exception {
+		
+		if (log.isDebugEnabled())
+			log.debug("[" + pojo.toString() + "]");
+		
+		timestamp = null;
+		
+		int index = 1;
+		
+		try {
+		
+			preparedStatement = getConnection().prepareStatement(generateSQLFindAllBy(pojo, SQLProperties.SQL_FIND_ALL_BY));
+			
+			if (pojo.getName() != null)
+				preparedStatement.setString(index++, pojo.getName());
+
+			if (pojo.getType().getId() != null)
+				preparedStatement.setLong(index++, pojo.getType().getId().longValue());
+			
+			if (pojo.getType().getName() != null)
+				preparedStatement.setString(index++, pojo.getType().getName());
+			
+			if (pojo.getCreated() != null)
+				preparedStatement.setTimestamp(index++, new Timestamp(pojo.getCreated().getTime()));
+			
+			if (pojo.getModified() != null)
+				preparedStatement.setTimestamp(index++, new Timestamp(pojo.getModified().getTime()));
+			
+			resultSet = preparedStatement.executeQuery();
+			list = new ArrayList<Properties>();
+			
+			while (resultSet.next()) {			
+
+				property = new Properties();
+				property.setId(Long.valueOf(resultSet.getLong(SQLProperties.ID)));
+				property.setName(resultSet.getString(SQLProperties.NAME));
+				property.setValue(resultSet.getString(SQLProperties.VALUE));
+				
+				timestamp = resultSet.getTimestamp(SQLProperties.CREATED);
+				if (timestamp != null)
+					property.setCreated(new Date(timestamp.getTime()));
+				
+				timestamp = resultSet.getTimestamp(SQLProperties.MODIFIED);
+				if (timestamp != null)
+					property.setModified(new Date(timestamp.getTime()));
+				
+				user = new User();
+				user.setId(Long.valueOf(resultSet.getLong(SQLProperties.USER_ID)));
+				user.setName(resultSet.getString(SQLProperties.USER_NAME));
+				
+				type = new PropertiesType();
+				type.setId(Long.valueOf(resultSet.getLong(SQLProperties.TYPE_ID)));
+				type.setName(resultSet.getString(SQLProperties.TYPE_NAME));
+				
+				property.setUser(user);
+				property.setType(type);
+				
+				list.add(property);
+			}
+			
+			return list;
+			
+		} catch (NamingException e) {
+			log.error(Messages.ERROR_LIST + "[" + Messages.ERROR_DATASOURCE + "]", e);
+			throw e;
+		} catch (SQLException e) {
+			log.error(Messages.ERROR_LIST + "[" + Messages.ERROR_DATABASE + "]", e);
+			throw e;
+		} catch (Exception e) {
+			log.error(Messages.ERROR_LIST, e);
+			throw e;
+		} finally {
+			
+			if (preparedStatement != null && !preparedStatement.isClosed())
+				preparedStatement.close();
+			
+			if (resultSet != null && !resultSet.isClosed())
+				resultSet.close();
+
+			try {
+				
+				closeConnection();
+				
+			} catch (NamingException e) {
+				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
+				throw e;
+			} catch (SQLException e) {
+				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
+				throw e;
+			} catch (Exception e) {
+				log.error(Messages.ERROR_CLOSE_CONNECTION, e);
+				throw e;
+			}
+		}
+	}
+	
+	private static String generateSQLFindAllBy(Properties property, String sql) {
+		
+		StringBuilder sb = new StringBuilder(sql);
+		
+		if (property.getName() != null)
+			sb.append(" and a.name = ?");
+
+		if (property.getType().getId() != null)
+			sb.append(" and a.properties_type_id = ?");
+		
+		if (property.getType().getName() != null)
+			sb.append(" and b.name = ?");
+		
+		if (property.getCreated() != null)
+			sb.append(" and a.created = ?");
+		
+		if (property.getModified() != null)
+			sb.append(" and a.modified = ?");
+		
+		if (log.isDebugEnabled())
+			log.debug("[sql=" + sb.toString() + ";" + property.toString() + "]");
+		
+		return sb.toString();
 	}
 }

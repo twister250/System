@@ -22,7 +22,7 @@ import br.com.player.util.Messages;
 public class PropertiesTypeBean extends AbstractBean {
 
 	private static final long serialVersionUID = 1L;
-	private static Logger log = Logger.getLogger(PropertiesBean.class);
+	private static Logger log = Logger.getLogger(PropertiesTypeBean.class);
 	private PropertiesType type;
 	private List<PropertiesType> types;
 
@@ -33,7 +33,7 @@ public class PropertiesTypeBean extends AbstractBean {
 	public void init() {
 
 		if (log.isDebugEnabled())
-			log.debug("PropertiesTypeBean:init()");
+			log.debug("[" + null + "]");
 
 		type = new PropertiesType();
 

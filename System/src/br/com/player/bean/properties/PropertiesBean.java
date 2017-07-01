@@ -13,7 +13,6 @@ import org.apache.log4j.Logger;
 
 import br.com.player.bean.AbstractBean;
 import br.com.player.bo.properties.PropertiesBO;
-import br.com.player.bo.properties.PropertiesTypeBO;
 import br.com.player.entity.Properties;
 import br.com.player.util.Constants;
 import br.com.player.util.Messages;
@@ -33,14 +32,11 @@ public class PropertiesBean extends AbstractBean {
 	@ManagedProperty("#{propertiesBO}")
 	private PropertiesBO propertiesBO;
 
-	@ManagedProperty("#{propertiesTypeBO}")
-	private PropertiesTypeBO propertiesTypeBO;
-
 	@PostConstruct
 	public void init() {
 
 		if (log.isDebugEnabled())
-			log.debug("PropertiesBean:init()");
+			log.debug("[" + null + "]");
 
 		property = new Properties();
 
@@ -226,6 +222,31 @@ public class PropertiesBean extends AbstractBean {
 		}
 	}
 
+	public List<Properties> findAllBy(Properties property) {
+		
+		if (log.isDebugEnabled())
+			log.debug("[" + property.toString() + "]");
+		
+		try {
+			
+			return propertiesBO.findAllBy(property);
+			
+		} catch (NamingException e) {
+			log.error(Messages.ERROR_LIST + Messages.ERROR_DATASOURCE + "[" + property.toString() + "]", e);
+			addErrorMessage(null, Messages.ERROR_LIST, Messages.ERROR_DATASOURCE);
+			return null;
+		} catch (SQLException e) {
+			log.error(Messages.ERROR_LIST + Messages.ERROR_DATABASE + "[" + property.toString() + "]", e);
+			addErrorMessage(null, Messages.ERROR_LIST, Messages.ERROR_DATABASE);
+			return null;
+		} catch (Exception e) {
+			log.error(Messages.ERROR_LIST + "[" + property.toString() + "]", e);
+			addErrorMessage(null, Messages.ERROR_LIST, e.getMessage());
+			return null;
+		}
+		
+	}
+	
 	public PropertiesBO getPropertiesBO() {
 		return propertiesBO;
 	}
@@ -240,14 +261,6 @@ public class PropertiesBean extends AbstractBean {
 
 	public void setProperty(Properties property) {
 		this.property = property;
-	}
-
-	public PropertiesTypeBO getPropertiesTypeBO() {
-		return this.propertiesTypeBO;
-	}
-
-	public void setPropertiesTypeBO(PropertiesTypeBO propertiesTypeBO) {
-		this.propertiesTypeBO = propertiesTypeBO;
 	}
 
 	public List<Properties> getProperties() {

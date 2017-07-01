@@ -12,6 +12,22 @@ public class Properties implements Entity {
 	private Date modified;
 	private User user;
 
+	public Properties () {}
+	
+	public Properties (Long id, String name, String value, PropertiesType type) {
+		if (id != null)
+			this.id = id;
+		
+		if (name != null)
+			this.name = name;
+		
+		if (value != null)
+			this.value = value;
+		
+		if (type != null)
+			this.type = type;
+	}
+	
 	public Long getId() {
 		return this.id;
 	}

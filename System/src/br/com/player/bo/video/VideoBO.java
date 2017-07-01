@@ -123,7 +123,7 @@ public class VideoBO {
 	public List<Video> list() throws NamingException, SQLException, Exception {
 		
 		if (log.isDebugEnabled())
-			log.debug("");
+			log.debug("[" + null + "]");
 		
 		try {
 			

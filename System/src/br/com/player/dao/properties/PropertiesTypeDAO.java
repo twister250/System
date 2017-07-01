@@ -101,8 +101,13 @@ public class PropertiesTypeDAO extends DAO implements Serializable {
 
 	public PropertiesType get(Long id) throws NamingException, SQLException, Exception {
 
+		if (log.isDebugEnabled())
+			log.debug("[" + id + "]");
+		
 		try {
 
+			timestamp = null;
+			
 			preparedStatement = getConnection().prepareStatement(SQLPropertiesType.SQL_GET);
 			preparedStatement.setLong(1, id.longValue());
 			resultSet = preparedStatement.executeQuery();
@@ -257,8 +262,13 @@ public class PropertiesTypeDAO extends DAO implements Serializable {
 	
 	public List<PropertiesType> list() throws NamingException, SQLException, Exception {
 
+		if (log.isDebugEnabled())
+			log.debug("[" + null + "]");
+		
 		try {
 
+			timestamp = null;
+			
 			preparedStatement = getConnection().prepareStatement(SQLPropertiesType.SQL_LIST);
 			resultSet = preparedStatement.executeQuery();
 			list = new ArrayList<PropertiesType>();
@@ -320,5 +330,5 @@ public class PropertiesTypeDAO extends DAO implements Serializable {
 				throw e;
 			}
 		}
-	}
+	}	
 }
